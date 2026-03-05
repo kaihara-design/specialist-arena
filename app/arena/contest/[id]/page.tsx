@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
@@ -27,9 +27,9 @@ type LeaderboardFilter = "humans" | "ai" | "all";
 export default function ContestPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = use(params);
+  const { id } = params;
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [lbFilter, setLbFilter] = useState<LeaderboardFilter>("humans");
 
