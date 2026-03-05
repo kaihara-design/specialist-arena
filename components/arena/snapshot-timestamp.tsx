@@ -13,7 +13,7 @@ export function SnapshotTimestamp({
     <div className="flex items-center justify-center gap-1.5 py-4">
       <Clock className="h-3 w-3 text-[#90a1b9]" />
       <p className="text-xs font-medium text-[#90a1b9]">
-        Last updated {lastUpdated} · Next refresh in {nextRefresh}
+        Last updated {lastUpdated} · Refreshes every 4h
       </p>
     </div>
   );

@@ -1,5 +1,7 @@
-import { TrendingUp, AlertTriangle, Target, ArrowRight } from "lucide-react";
-import Link from "next/link";
+"use client";
+
+import { useState } from "react";
+import { TrendingUp, AlertTriangle, Target, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PersonalRankPanelProps {
@@ -10,7 +12,6 @@ interface PersonalRankPanelProps {
   proximityToNext: number;
   lastActive: string;
   hasDecayRisk?: boolean;
-  contestId: string;
 }
 
 export function PersonalRankPanel({
@@ -21,8 +22,9 @@ export function PersonalRankPanel({
   proximityToNext,
   lastActive,
   hasDecayRisk,
-  contestId,
 }: PersonalRankPanelProps) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
   return (
     <div className="bg-white border border-slate-100 rounded-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5">
       <div>
@@ -48,42 +50,35 @@ export function PersonalRankPanel({
         )}
       </div>
 
-      {/* Score */}
+      {/* Score — number + info icon only */}
       <div className="bg-slate-50 rounded-[10px] px-4 py-3">
         <p className="text-xs font-medium text-slate-400 mb-1">Arena Score</p>
-        <p className="text-2xl font-extrabold text-slate-800">{score}</p>
-        <p className="text-[10px] text-slate-400 mt-0.5">Formula pending confirmation</p>
-      </div>
-
-      {/* Score breakdown placeholder */}
-      <div className="space-y-2.5">
-        {[
-          { label: "Accuracy", value: 78 },
-          { label: "Throughput", value: 62 },
-          { label: "Recency", value: 85 },
-        ].map(({ label, value }) => (
-          <div key={label}>
-            <div className="flex justify-between mb-1">
-              <span className="text-xs text-slate-500">{label}</span>
-              <span className="text-xs font-semibold text-slate-700">
-                {value}%
-              </span>
-            </div>
-            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-                style={{ width: `${value}%` }}
-              />
-            </div>
+        <div className="flex items-center gap-2">
+          <p className="text-2xl font-extrabold text-slate-800">{score.toFixed(1)}</p>
+          <div className="relative">
+            <button
+              onMouseEnter={() => setTooltipOpen(true)}
+              onMouseLeave={() => setTooltipOpen(false)}
+              className="text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label="Score info"
+            >
+              <Info className="h-4 w-4" />
+            </button>
+            {tooltipOpen && (
+              <div className="absolute left-6 top-0 w-[200px] bg-slate-800 text-white text-xs rounded-[8px] px-3 py-2 z-10 leading-relaxed shadow-lg">
+                Score combines accuracy, throughput &amp; recency. Formula pending final confirmation.
+                <div className="absolute left-[-4px] top-2 w-2 h-2 bg-slate-800 rotate-45" />
+              </div>
+            )}
           </div>
-        ))}
+        </div>
       </div>
 
       {/* Proximity to next rank */}
       <div className="flex items-center gap-2 text-xs text-slate-500">
         <Target className="h-3.5 w-3.5 text-indigo-400" />
         <span>
-          <span className="font-semibold text-slate-700">{proximityToNext} pts</span>{" "}
+          <span className="font-semibold text-slate-700">{proximityToNext.toFixed(1)} pts</span>{" "}
           to reach rank #{rank - 1}
         </span>
       </div>
@@ -98,14 +93,6 @@ export function PersonalRankPanel({
         </div>
       )}
 
-      {/* CTA */}
-      <Link
-        href={`/arena/contest/${contestId}`}
-        className="flex items-center justify-center gap-2 h-[36px] w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-[8px] transition-colors btn-shadow"
-      >
-        Start Task
-        <ArrowRight className="h-4 w-4" />
-      </Link>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Users, Calendar, ArrowRight } from "lucide-react";
+import { Users, Bot } from "lucide-react";
 import type { Contest } from "@/lib/types";
 
 interface ContestCardProps {
@@ -12,17 +12,19 @@ export function ContestCard({ contest }: ContestCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-indigo-600 bg-indigo-50 px-2 py-1 rounded-[4px]">
-              {contest.taskType}
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded-[4px]">
-              Active
-            </span>
-          </div>
-          <h3 className="text-[20px] font-bold text-slate-800 leading-[28px] tracking-[-0.45px]">
+          <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-indigo-600 bg-indigo-50 px-2 py-1 rounded-[4px]">
+            {contest.taskType}
+          </span>
+          <h3 className="text-[20px] font-bold text-slate-800 leading-[28px] tracking-[-0.45px] mt-2">
             {contest.title}
           </h3>
+        </div>
+        {/* Prize pool — prominent */}
+        <div className="text-right flex-shrink-0">
+          <p className="text-xl font-extrabold text-amber-500">{contest.prizePool}</p>
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide leading-none mt-0.5">
+            {contest.prizeRefreshPeriod} prize
+          </p>
         </div>
       </div>
 
@@ -38,8 +40,8 @@ export function ContestCard({ contest }: ContestCardProps) {
           {contest.participantCount} specialists
         </span>
         <span className="flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5" />
-          Since {contest.activeSince}
+          <Bot className="h-3.5 w-3.5" />
+          {contest.aiModelCount} AI models competing
         </span>
       </div>
 
@@ -53,10 +55,9 @@ export function ContestCard({ contest }: ContestCardProps) {
         </Link>
         <Link
           href={`/arena/contest/${contest.id}`}
-          className="flex items-center gap-1.5 h-[32px] px-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-[8px] transition-colors btn-shadow"
+          className="flex items-center h-[32px] px-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-[8px] transition-colors btn-shadow"
         >
-          Join Arena
-          <ArrowRight className="h-3.5 w-3.5" />
+          Join Competition
         </Link>
       </div>
     </div>

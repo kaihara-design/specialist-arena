@@ -6,7 +6,7 @@ import { Podium } from "@/components/arena/podium";
 import { SnapshotTimestamp } from "@/components/arena/snapshot-timestamp";
 import { LeaderboardRankBadge } from "@/components/arena/leaderboard-rank-badge";
 import { CONTESTS, SNAPSHOT_INFO, LEADERBOARD_OUT_OF_TOP } from "@/lib/mock-data";
-import { Trophy, Lock, ArrowRight, PanelLeft, Medal, X } from "lucide-react";
+import { Trophy, Lock, ArrowRight, PanelLeft, Medal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -66,15 +66,14 @@ export default function ArenaEmptyPage() {
                   Your rank is waiting
                 </h3>
                 <p className="text-sm text-indigo-700 max-w-sm">
-                  Complete your first Arena task to join the leaderboard and start competing with {CONTESTS[0].participantCount} specialists.
+                  Join your first competition to enter the leaderboard and start competing with {CONTESTS[0].participantCount} specialists.
                 </p>
               </div>
               <Link
                 href="/arena/contest/skin-lesion"
-                className="inline-flex items-center gap-2 h-[40px] px-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-[8px] transition-colors btn-shadow"
+                className="inline-flex items-center h-[40px] px-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-[8px] transition-colors btn-shadow"
               >
-                Start Your First Arena Task
-                <ArrowRight className="h-4 w-4" />
+                Start Your First Competition
               </Link>
               <p className="text-xs text-indigo-500 flex items-center gap-1.5">
                 <Medal className="h-3.5 w-3.5" />
@@ -89,7 +88,7 @@ export default function ArenaEmptyPage() {
             >
               <div className="flex items-center gap-4 mb-6">
                 <h3 className="text-xl font-semibold text-slate-800">
-                  Active Contests
+                  Active Competitions
                 </h3>
                 <span className="text-base font-normal text-slate-500">
                   {CONTESTS.length} open now
@@ -102,28 +101,20 @@ export default function ArenaEmptyPage() {
               </div>
             </section>
 
-            {/* Global Leaderboard — empty state */}
+            {/* Who's Leading — empty state */}
             <section
               className="animate-fade-in"
               style={{ animationDelay: "120ms" }}
             >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <h3 className="text-xl font-semibold text-slate-800">
-                    Global Leaderboard
-                  </h3>
-                  <div className="flex items-center gap-1.5 bg-white border border-[rgba(0,0,0,0.1)] px-2.5 py-0.5 rounded-[8px]">
-                    <span className="text-xs font-medium text-slate-500">
-                      150 specialists
-                    </span>
-                  </div>
+              <div className="flex items-center gap-4 mb-6">
+                <h3 className="text-xl font-semibold text-slate-800">
+                  Who&apos;s Leading
+                </h3>
+                <div className="flex items-center gap-1.5 bg-white border border-[rgba(0,0,0,0.1)] px-2.5 py-0.5 rounded-[8px]">
+                  <span className="text-xs font-medium text-slate-500">
+                    {CONTESTS.length} competitions
+                  </span>
                 </div>
-                <Link
-                  href="/arena/contest/skin-lesion"
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
-                >
-                  View full leaderboard →
-                </Link>
               </div>
 
               {/* Podium — shown normally to create aspiration */}
@@ -161,7 +152,7 @@ export default function ArenaEmptyPage() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-700">
-                        Complete your first Arena task
+                        Join your first competition
                       </p>
                       <p className="text-xs text-slate-400 mt-0.5">
                         to claim your rank and see the full leaderboard

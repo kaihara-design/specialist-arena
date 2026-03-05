@@ -22,14 +22,14 @@ export function InactivityWarning({
       <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-amber-800">
-          You haven&apos;t completed an Arena task in {daysInactive} days —
+          You haven&apos;t competed in {daysInactive} days —
           your score may drop soon
         </p>
         <Link
           href={`/arena/contest/${contestId}`}
           className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors"
         >
-          Complete a task now
+          Compete now
           <ArrowRight className="h-3 w-3" />
         </Link>
       </div>

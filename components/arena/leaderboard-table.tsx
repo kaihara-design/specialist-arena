@@ -40,7 +40,7 @@ function ScoreSlot({ score }: { score: number }) {
 
   return (
     <div className="relative flex items-center gap-1">
-      <span className="text-sm font-extrabold text-slate-800">{score}</span>
+      <span className="text-sm font-extrabold text-slate-800">{score.toFixed(1)}</span>
       <button
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
@@ -180,9 +180,12 @@ export function LeaderboardTable({
       <div>
         {/* Column headers */}
         <div className="flex items-center justify-between px-6 pb-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Specialist
-          </span>
+          <div className="flex items-center gap-4">
+            <div className="w-6 flex-shrink-0" />
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+              Specialist
+            </span>
+          </div>
           <div className="flex items-center gap-5">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
               Score

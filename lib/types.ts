@@ -10,14 +10,32 @@ export interface LeaderboardEntry {
   hasDecayRisk?: boolean;
 }
 
+export interface AIModelEntry {
+  rank: number;
+  modelName: string;
+  score: number;
+  lastEvaluated: string;
+}
+
 export interface Contest {
   id: string;
   title: string;
   description: string;
+  about: string;
   taskType: string;
   participantCount: number;
   activeSince: string;
+  prizePool: string;
+  prizeRefreshPeriod: string;
+  aiModelCount: number;
+  centaurBestScore: string;
+  prizeCycleDaysLeft: number;
+  prizeStructure: { rank: string; amount: string }[];
+  scoring: { title: string; body: string }[];
+  instructions: string;
+  hasPractice: boolean;
   leaderboard: LeaderboardEntry[];
+  aiLeaderboard: AIModelEntry[];
 }
 
 export interface CurrentUser {
