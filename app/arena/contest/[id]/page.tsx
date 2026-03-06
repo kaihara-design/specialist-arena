@@ -18,10 +18,13 @@ import {
   PanelLeft,
   Trophy,
   Infinity,
+  Lock,
+  BookOpen,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Tab = "overview" | "leaderboard" | "how-to-compete" | "practice";
+type Tab = "overview" | "leaderboard" | "how-to-compete";
 type LeaderboardFilter = "humans" | "ai" | "all";
 
 export default function ContestPage({
@@ -32,6 +35,8 @@ export default function ContestPage({
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [lbFilter, setLbFilter] = useState<LeaderboardFilter>("humans");
+  const [hasPracticed, setHasPracticed] = useState(false);
+  const [showInstructionsModal, setShowInstructionsModal] = useState(false);
 
   const contest = CONTESTS.find((c) => c.id === id);
   if (!contest) notFound();
@@ -51,8 +56,9 @@ export default function ContestPage({
     { id: "overview", label: "Overview" },
     { id: "leaderboard", label: "Leaderboard" },
     { id: "how-to-compete", label: "How to Compete" },
-    ...(contest.hasPractice ? [{ id: "practice" as Tab, label: "Practice" }] : []),
   ];
+
+  const needsPractice = contest.hasPractice && !hasPracticed;
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -177,12 +183,42 @@ export default function ContestPage({
                   </button>
                 ))}
               </div>
-              <Link
-                href={`/arena/contest/${contest.id}`}
-                className="flex items-center h-[34px] px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-[8px] transition-colors btn-shadow mb-1"
-              >
-                Join Competition
-              </Link>
+              <div className="flex items-center gap-2 mb-1">
+                {contest.hasPractice && (
+                  <button
+                    onClick={() => setHasPracticed(true)}
+                    className={cn(
+                      "flex items-center h-[34px] px-4 text-sm font-medium rounded-[8px] transition-colors",
+                      hasPracticed
+                        ? "border border-slate-200 text-slate-600 hover:bg-slate-50"
+                        : "bg-indigo-600 hover:bg-indigo-700 text-white btn-shadow"
+                    )}
+                  >
+                    {hasPracticed ? "Practice" : "Start Practice"}
+                  </button>
+                )}
+                {needsPractice ? (
+                  <div className="relative group">
+                    <button
+                      disabled
+                      className="flex items-center gap-1.5 h-[34px] px-4 text-slate-400 text-sm font-medium rounded-[8px] border border-slate-200 bg-slate-50 cursor-not-allowed"
+                    >
+                      <Lock className="h-3.5 w-3.5" />
+                      Join Competition
+                    </button>
+                    <div className="absolute right-0 top-full mt-1.5 w-max max-w-[200px] bg-slate-800 text-white text-xs rounded-[6px] px-2.5 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                      Complete practice first
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    href={`/arena/contest/${contest.id}`}
+                    className="flex items-center h-[34px] px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-[8px] transition-colors btn-shadow"
+                  >
+                    Join Competition
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Tab content */}
@@ -429,7 +465,6 @@ export default function ContestPage({
                               </div>
                               <span className="flex-1 text-sm font-medium text-slate-700">{model.modelName}</span>
                               <span className="text-sm font-extrabold text-slate-800">{model.score.toFixed(1)}</span>
-                              <span className="text-xs text-slate-400 w-[80px] text-right">{model.lastEvaluated}</span>
                             </div>
                           ))}
                         </div>
@@ -569,38 +604,55 @@ export default function ContestPage({
                   {/* Task Instructions */}
                   <section>
                     <h2 className="text-lg font-semibold text-slate-800 mb-4">Task Instructions</h2>
-                    <div className="bg-white border border-slate-100 rounded-[14px] px-6 py-5 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.06)]">
-                      <div className="space-y-3">
-                        {contest.instructions.split("\n\n").map((para, i) => (
-                          <p key={i} className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
-                            {para}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
+                    <button
+                      onClick={() => setShowInstructionsModal(true)}
+                      className="flex items-center gap-2 h-[38px] px-4 text-sm font-medium text-slate-700 border border-slate-200 rounded-[8px] hover:bg-slate-50 transition-colors"
+                    >
+                      <BookOpen className="h-4 w-4 text-slate-400" />
+                      View Task Instructions
+                    </button>
                   </section>
                 </div>
               )}
 
-              {/* ── Practice ── */}
-              {activeTab === "practice" && contest.hasPractice && (
-                <div className="flex items-center justify-center py-16">
-                  <div className="text-center max-w-sm">
-                    <div className="h-14 w-14 rounded-full bg-indigo-50 flex items-center justify-center mx-auto mb-4">
-                      <Trophy className="h-6 w-6 text-indigo-400" />
-                    </div>
-                    <h3 className="text-base font-semibold text-slate-800 mb-2">Practice mode coming soon</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                      You&apos;ll be able to try sample cases before competing — no score impact, just a chance to calibrate.
-                    </p>
-                  </div>
-                </div>
-              )}
 
             </div>
           </div>
         </div>
       </div>
+
+      {/* Instructions modal */}
+      {showInstructionsModal && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 z-50"
+            onClick={() => setShowInstructionsModal(false)}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
+            <div className="bg-white rounded-[14px] shadow-2xl w-full max-w-[560px] max-h-[80vh] flex flex-col pointer-events-auto">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-slate-400" />
+                  <h3 className="text-sm font-semibold text-slate-800">Task Instructions</h3>
+                </div>
+                <button
+                  onClick={() => setShowInstructionsModal(false)}
+                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="overflow-y-auto px-6 py-5 flex flex-col gap-3">
+                {contest.instructions.split("\n\n").map((para, i) => (
+                  <p key={i} className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                    {para}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

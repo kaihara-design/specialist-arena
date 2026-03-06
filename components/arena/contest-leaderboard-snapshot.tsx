@@ -32,7 +32,8 @@ export function ContestLeaderboardSnapshot({
     <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-[10px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] overflow-hidden">
       {/* Table header */}
       <div
-        className="grid items-center px-4 py-3 border-b border-slate-100 bg-slate-50/60"
+        key={`header-${contests.map((c) => c.id).join(",")}`}
+        className="grid items-center px-4 py-3 border-b border-slate-100 bg-slate-50/60 animate-fade-in"
         style={{ gridTemplateColumns: `80px repeat(${contests.length}, 1fr)` }}
       >
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
@@ -49,8 +50,11 @@ export function ContestLeaderboardSnapshot({
         ))}
       </div>
 
-      {/* Rows — one per rank position */}
-      <div className="divide-y divide-slate-50">
+      {/* Rows — one per rank position; keyed on contest IDs so React remounts on flip */}
+      <div
+        key={contests.map((c) => c.id).join(",")}
+        className="divide-y divide-slate-50 animate-fade-in"
+      >
         {ranks.map((rank) => {
           // Check if current user appears in this rank row in any contest
           const userInThisRow = contestTopEntries.some(({ entries }) =>

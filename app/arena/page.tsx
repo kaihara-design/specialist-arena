@@ -1,12 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { ContestCard } from "@/components/arena/contest-card";
 import { ContestLeaderboardSnapshot } from "@/components/arena/contest-leaderboard-snapshot";
 import { CONTESTS, SNAPSHOT_INFO, CURRENT_USER } from "@/lib/mock-data";
-import { PanelLeft } from "lucide-react";
+import { PanelLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 2;
 
 export default function ArenaPage() {
+  const [page, setPage] = useState(0);
+  const totalPages = Math.ceil(CONTESTS.length / PAGE_SIZE);
+  const visibleContests = CONTESTS.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   const totalPrize = CONTESTS.reduce((sum, c) => {
     const amount = parseInt(c.prizePool.replace(/\D/g, ""), 10);
     return sum + (isNaN(amount) ? 0 : amount);
@@ -80,44 +88,67 @@ export default function ArenaPage() {
               </div>
             </div>
 
-            {/* Active Competitions */}
+            {/* Active Competitions + Who's Leading — unified paginated block */}
             <section
               className="animate-fade-in"
               style={{ animationDelay: "80ms" }}
             >
-              <div className="flex items-center gap-4 mb-6">
-                <h3 className="text-xl font-semibold text-slate-800">
-                  Active Competitions
-                </h3>
-                <span className="text-base font-normal text-slate-500">
-                  {CONTESTS.length} open now
-                </span>
+              {/* Section header with pagination */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <h3 className="text-xl font-semibold text-slate-800">
+                    Active Competitions
+                  </h3>
+                  <span className="text-base font-normal text-slate-500">
+                    {CONTESTS.length} open now
+                  </span>
+                </div>
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-400">
+                      {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, CONTESTS.length)} of {CONTESTS.length}
+                    </span>
+                    <button
+                      onClick={() => setPage((p) => p - 1)}
+                      disabled={page === 0}
+                      className={cn(
+                        "h-7 w-7 flex items-center justify-center rounded-[6px] border border-slate-200 transition-colors",
+                        page === 0
+                          ? "text-slate-300 cursor-not-allowed"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                      )}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={(page + 1) * PAGE_SIZE >= CONTESTS.length}
+                      className={cn(
+                        "h-7 w-7 flex items-center justify-center rounded-[6px] border border-slate-200 transition-colors",
+                        (page + 1) * PAGE_SIZE >= CONTESTS.length
+                          ? "text-slate-300 cursor-not-allowed"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                      )}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
+
+              {/* Contest cards */}
               <div className="grid grid-cols-2 gap-4">
-                {CONTESTS.map((contest) => (
+                {visibleContests.map((contest) => (
                   <ContestCard key={contest.id} contest={contest} />
                 ))}
               </div>
-            </section>
 
-            {/* Who's Leading — cross-contest snapshot */}
-            <section
-              className="animate-fade-in"
-              style={{ animationDelay: "120ms" }}
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <h3 className="text-xl font-semibold text-slate-800">
-                  Who&apos;s Leading
-                </h3>
-                <div className="flex items-center gap-1.5 bg-white border border-[rgba(0,0,0,0.1)] px-2.5 py-0.5 rounded-[8px]">
-                  <span className="text-xs font-medium text-slate-500">
-                    {CONTESTS.length} contests
-                  </span>
-                </div>
-              </div>
-
+              {/* Who's Leading — inline sub-section */}
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-8 mb-3">
+                Who&apos;s Leading
+              </p>
               <ContestLeaderboardSnapshot
-                contests={CONTESTS}
+                contests={visibleContests}
                 currentUserId={CURRENT_USER.id}
                 lastUpdated={SNAPSHOT_INFO.lastUpdated}
                 nextRefresh={SNAPSHOT_INFO.nextRefresh}

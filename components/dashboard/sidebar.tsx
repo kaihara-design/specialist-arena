@@ -7,7 +7,6 @@ import {
   FileText,
   BookOpen,
   ExternalLink,
-  ChevronsUpDown,
   CircleUserRound,
   LogOut,
   Trophy,
@@ -54,7 +53,7 @@ export function DashboardSidebar({ active }: DashboardSidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 p-4 flex flex-col gap-1">
         <Link
-          href="/dashboard"
+          href="/home"
           className={cn(
             "flex items-center gap-4 h-[36px] px-[12px] rounded-[8px] text-[14px] transition-colors",
             active === "home"

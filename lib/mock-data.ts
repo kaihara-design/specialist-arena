@@ -152,6 +152,75 @@ export const CONTESTS: Contest[] = [
     leaderboard: LEADERBOARD_IN_TOP,
     aiLeaderboard: AI_MODELS_LEADERBOARD,
   },
+  {
+    id: "retinal-oct",
+    title: "Retinal OCT Grading",
+    description:
+      "Grade optical coherence tomography scans for diabetic macular edema and age-related macular degeneration severity.",
+    about:
+      "Optical coherence tomography (OCT) is the standard of care for retinal imaging, yet grading thousands of scans for clinical trials and AI training requires specialist time that is in short supply. In this competition, ophthalmologists and optometrists review OCT cross-sections and grade disease severity on a structured scale.\n\nYour annotations directly accelerate the development of AI screening tools for diabetic retinopathy and AMD — two of the leading causes of preventable blindness worldwide.",
+    taskType: "Grading",
+    participantCount: 74,
+    activeSince: "Feb 20, 2025",
+    prizePool: "$500",
+    prizeRefreshPeriod: "weekly",
+    aiModelCount: 5,
+    centaurBestScore: "89.4",
+    prizeCycleDaysLeft: 4,
+    prizeStructure: SHARED_PRIZE_STRUCTURE,
+    scoring: SHARED_SCORING,
+    instructions:
+      "For each OCT B-scan, assign a severity grade from 0 (no pathology) to 4 (severe) based on the presence and extent of fluid, drusen, and photoreceptor layer disruption.\n\nKey features to assess:\n• Subretinal fluid — hyporeflective space beneath the neurosensory retina\n• Intraretinal fluid — cystoid spaces within the retinal layers\n• Drusen — hyperreflective deposits above the RPE\n• Ellipsoid zone integrity — disruption indicates photoreceptor loss\n\nFocus on the central 3mm region when assigning your grade.",
+    hasPractice: false,
+    leaderboard: LEADERBOARD_OUT_OF_TOP,
+    aiLeaderboard: AI_MODELS_LEADERBOARD,
+  },
+  {
+    id: "pathology-slides",
+    title: "Pathology Slide Analysis",
+    description:
+      "Review digitized histopathology slides and identify tumor margins, grade malignancy, and annotate tissue subtypes.",
+    about:
+      "Digital pathology is transforming how tissue samples are analyzed, but AI models require expert-labeled training data at scale. In this competition, pathologists review whole-slide images cropped to regions of interest and classify tissue as benign, pre-malignant, or malignant — with additional subtype annotation where applicable.\n\nEvery case you label advances the accuracy of AI-assisted pathology tools used in cancer diagnosis pipelines.",
+    taskType: "Classification",
+    participantCount: 61,
+    activeSince: "Mar 1, 2025",
+    prizePool: "$500",
+    prizeRefreshPeriod: "weekly",
+    aiModelCount: 5,
+    centaurBestScore: "87.9",
+    prizeCycleDaysLeft: 4,
+    prizeStructure: SHARED_PRIZE_STRUCTURE,
+    scoring: SHARED_SCORING,
+    instructions:
+      "For each histopathology image patch, select the tissue classification that best describes the predominant finding.\n\nClassification categories:\n• Normal — healthy tissue architecture, no atypia\n• Benign — abnormal but non-malignant (e.g. hyperplasia, adenoma)\n• Pre-malignant — dysplasia or in-situ changes\n• Malignant — invasive carcinoma or sarcoma\n\nWhen the image contains mixed tissue types, classify based on the most clinically significant region. Annotate the subtype when prompted.",
+    hasPractice: true,
+    leaderboard: LEADERBOARD_IN_TOP,
+    aiLeaderboard: AI_MODELS_LEADERBOARD,
+  },
+  {
+    id: "ecg-rhythm",
+    title: "ECG Rhythm Classification",
+    description:
+      "Classify 12-lead ECG recordings across arrhythmia categories. Requires cardiology or emergency medicine background.",
+    about:
+      "Cardiac arrhythmias are among the most time-sensitive diagnoses in medicine, yet automated ECG interpretation still misses clinically important findings. In this competition, cardiologists and emergency physicians review 10-second 12-lead ECG strips and assign the primary rhythm classification.\n\nYour labels contribute to training models that will flag abnormal rhythms in remote monitoring and wearable devices — extending specialist-level ECG reading to populations without access to cardiologists.",
+    taskType: "Classification",
+    participantCount: 88,
+    activeSince: "Mar 5, 2025",
+    prizePool: "$500",
+    prizeRefreshPeriod: "weekly",
+    aiModelCount: 5,
+    centaurBestScore: "92.1",
+    prizeCycleDaysLeft: 4,
+    prizeStructure: SHARED_PRIZE_STRUCTURE,
+    scoring: SHARED_SCORING,
+    instructions:
+      "For each ECG strip, select the primary rhythm from the classification list.\n\nSystematic review approach:\n1. Rate — calculate ventricular rate (normal: 60–100 bpm)\n2. Rhythm — regular or irregular? If irregular, is it regularly irregular or chaotically irregular?\n3. P waves — present, morphology, relationship to QRS\n4. PR interval — normal (120–200ms), short, or prolonged\n5. QRS duration — narrow (<120ms) or wide (≥120ms)\n\nIf multiple abnormalities are present, classify the dominant rhythm. Note: do not classify based on ST/T wave changes alone unless they define the rhythm.",
+    hasPractice: false,
+    leaderboard: LEADERBOARD_OUT_OF_TOP,
+    aiLeaderboard: AI_MODELS_LEADERBOARD,
+  },
 ];
 
 export const SNAPSHOT_INFO = {
