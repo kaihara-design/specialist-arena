@@ -482,7 +482,7 @@ export default function ContestPage({
                           ))}
                         </div>
                         <div className="px-4 py-3 border-t border-slate-100 text-center">
-                          <p className="text-xs text-slate-400">AI evaluations run weekly — more models coming soon</p>
+                          <p className="text-xs text-slate-400">AI models are evaluated periodically — more coming soon</p>
                         </div>
                       </div>
                     )}

@@ -12,7 +12,7 @@ export function ContestCard({ contest }: ContestCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-indigo-600 bg-indigo-50 px-2 py-1 rounded-[4px]">
+          <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-slate-500 bg-slate-100 px-2 py-1 rounded-[4px]">
             {contest.taskType}
           </span>
           <h3 className="text-[20px] font-bold text-slate-800 leading-[28px] tracking-[-0.45px] mt-2">

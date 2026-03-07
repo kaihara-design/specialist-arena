@@ -82,7 +82,7 @@ export default function HomePage() {
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-indigo-600 bg-indigo-50 px-2 py-1 rounded-[4px]">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-slate-500 bg-slate-100 px-2 py-1 rounded-[4px]">
                         {contest.taskType}
                       </span>
                       <p className="text-base font-medium text-slate-400 flex-shrink-0">
