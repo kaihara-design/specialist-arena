@@ -85,10 +85,9 @@ export default function HomePage() {
                       <span className="text-[10px] font-bold uppercase tracking-[0.7px] text-indigo-600 bg-indigo-50 px-2 py-1 rounded-[4px]">
                         {contest.taskType}
                       </span>
-                      <span>
-                        <span className="text-sm font-bold text-amber-500">{contest.prizePool}</span>
-                        <span className="text-xs text-slate-400">/wk</span>
-                      </span>
+                      <p className="text-base font-medium text-slate-400 flex-shrink-0">
+                        <span className="text-lg font-bold text-amber-500">${contest.earningCap}</span><span className="text-xs font-semibold uppercase tracking-wide">/WK</span>
+                      </p>
                     </div>
 
                     {/* Title */}

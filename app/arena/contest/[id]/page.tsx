@@ -6,7 +6,6 @@ import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { LeaderboardTable } from "@/components/arena/leaderboard-table";
 import { PersonalRankPanel } from "@/components/arena/personal-rank-panel";
-import { InactivityWarning } from "@/components/arena/inactivity-warning";
 import { Podium } from "@/components/arena/podium";
 import { CONTESTS, SNAPSHOT_INFO, CURRENT_USER } from "@/lib/mock-data";
 import {
@@ -16,7 +15,8 @@ import {
   Mail,
   Zap,
   PanelLeft,
-  Trophy,
+  DollarSign,
+  RefreshCw,
   Infinity,
   Lock,
   BookOpen,
@@ -25,7 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type Tab = "overview" | "leaderboard" | "how-to-compete";
-type LeaderboardFilter = "humans" | "ai" | "all";
+type LeaderboardFilter = "humans" | "ai";
 
 export default function ContestPage({
   params,
@@ -45,11 +45,9 @@ export default function ContestPage({
   const totalCount = contest.participantCount;
   const currentUserRank = currentUserEntry?.rank ?? 0;
   const entryAbove = contest.leaderboard.find((e) => e.rank === currentUserRank - 1);
-  const proximityToNext =
-    entryAbove && currentUserEntry ? entryAbove.score - currentUserEntry.score : 3;
-  const showInactivity = currentUserEntry?.hasDecayRisk;
+  const earningsToNext =
+    entryAbove && currentUserEntry ? entryAbove.earnings - currentUserEntry.earnings : 0.5;
   const top3 = contest.leaderboard.filter((e) => e.rank <= 3);
-  const topHuman = contest.leaderboard[0];
   const topAI = contest.aiLeaderboard[0];
 
   const tabs: { id: Tab; label: string }[] = [
@@ -139,11 +137,11 @@ export default function ContestPage({
             >
               <div className="grid grid-cols-4 divide-x divide-slate-100">
                 {[
-                  { label: "Prize Pool", value: contest.prizePool, sub: "per week" },
+                  { label: "Weekly Cap", value: `$${contest.earningCap}`, sub: "per specialist" },
                   { label: "Participants", value: `${contest.participantCount}`, sub: "specialists" },
-                  { label: "Centaur Best", value: contest.centaurBestScore, sub: "current high score" },
+                  { label: "Rate", value: `$${contest.ratePerRead.toFixed(2)}`, sub: "per qualified read" },
                   {
-                    label: "Prize Resets In",
+                    label: "Earnings Cap Resets In",
                     value: `${contest.prizeCycleDaysLeft}d`,
                     sub: "current cycle",
                     highlight: contest.prizeCycleDaysLeft <= 2,
@@ -242,10 +240,10 @@ export default function ContestPage({
                     </div>
                   </section>
 
-                  {/* Performance standings */}
+                  {/* Accuracy Benchmarks */}
                   <section>
                     <h2 className="text-lg font-semibold text-slate-800 mb-3">
-                      Performance Standings
+                      Accuracy Benchmarks
                     </h2>
                     <div className="grid grid-cols-3 gap-4">
                       {/* Centaur card */}
@@ -274,7 +272,7 @@ export default function ContestPage({
                           <p className="text-3xl font-extrabold text-white">
                             {contest.centaurBestScore}
                           </p>
-                          <p className="text-[11px] text-indigo-300 mt-1">Collective score</p>
+                          <p className="text-[11px] text-indigo-300 mt-1">Accuracy score</p>
                         </div>
                       </div>
 
@@ -289,14 +287,14 @@ export default function ContestPage({
                               Top Human
                             </p>
                             <p className="text-xs font-semibold text-slate-700">
-                              {topHuman.specialistId}
+                              Best individual
                             </p>
                           </div>
                         </div>
                         <p className="text-3xl font-extrabold text-slate-800">
-                          {topHuman.score.toFixed(1)}
+                          {contest.topHumanScore}
                         </p>
-                        <p className="text-[11px] text-slate-400 mt-1">Individual score</p>
+                        <p className="text-[11px] text-slate-400 mt-1">Accuracy score</p>
                       </div>
 
                       {/* Top AI card */}
@@ -317,7 +315,7 @@ export default function ContestPage({
                         <p className="text-3xl font-extrabold text-slate-800">
                           {topAI.score.toFixed(1)}
                         </p>
-                        <p className="text-[11px] text-slate-400 mt-1">Model score</p>
+                        <p className="text-[11px] text-slate-400 mt-1">Accuracy score</p>
                       </div>
                     </div>
                     <p className="text-xs text-slate-400 mt-3 leading-relaxed">
@@ -325,41 +323,60 @@ export default function ContestPage({
                     </p>
                   </section>
 
-                  {/* Prize structure + reward box — side by side */}
+                  {/* How You Earn + Payouts — side by side */}
                   <div className="grid grid-cols-2 gap-6 items-start">
-                    {/* Prize structure */}
+                    {/* Earn mode info */}
                     <section>
                       <h2 className="text-lg font-semibold text-slate-800 mb-3">
-                        Prize Structure
+                        How You Earn
                       </h2>
                       <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
-                        {contest.prizeStructure.map(({ rank, amount }, i) => (
+                        {[
+                          {
+                            icon: <DollarSign className="h-4 w-4 text-emerald-500" />,
+                            label: "Rate per read",
+                            sub: "for each qualified read submitted",
+                            value: `$${contest.ratePerRead.toFixed(2)}`,
+                          },
+                          {
+                            icon: <Zap className="h-4 w-4 text-amber-500" />,
+                            label: "Weekly cap",
+                            sub: "maximum per specialist per cycle",
+                            value: `$${contest.earningCap}`,
+                          },
+                          {
+                            icon: <RefreshCw className="h-4 w-4 text-indigo-400" />,
+                            label: "Cap resets",
+                            sub: "earn fresh every Monday",
+                            value: "Weekly",
+                          },
+                        ].map(({ icon, label, sub, value }, i, arr) => (
                           <div
-                            key={rank}
+                            key={label}
                             className={cn(
-                              "flex items-center justify-between px-5 py-3",
-                              i < contest.prizeStructure.length - 1 && "border-b border-slate-50"
+                              "flex items-center justify-between px-5 py-3.5",
+                              i < arr.length - 1 && "border-b border-slate-50"
                             )}
                           >
                             <div className="flex items-center gap-3">
-                              <Trophy
-                                className={cn(
-                                  "h-4 w-4",
-                                  i === 0 ? "text-amber-400" : i === 1 ? "text-slate-400" : "text-orange-400"
-                                )}
-                              />
-                              <span className="text-sm font-semibold text-slate-700">{rank} place</span>
+                              <div className="h-7 w-7 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                {icon}
+                              </div>
+                              <div>
+                                <p className="text-sm font-semibold text-slate-700">{label}</p>
+                                <p className="text-xs text-slate-400">{sub}</p>
+                              </div>
                             </div>
-                            <span className="text-sm font-extrabold text-slate-800">{amount}</span>
+                            <span className="text-sm font-extrabold text-slate-800">{value}</span>
                           </div>
                         ))}
                         <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
-                          <p className="text-xs text-slate-400">Prize pool resets weekly · {contest.prizePool} total</p>
+                          <p className="text-xs text-slate-400">Earnings paid out after each weekly cycle closes</p>
                         </div>
                       </div>
                     </section>
 
-                    {/* Reward info box */}
+                    {/* Payouts */}
                     <section>
                       <h2 className="text-lg font-semibold text-slate-800 mb-3">
                         Payouts
@@ -371,10 +388,10 @@ export default function ContestPage({
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-indigo-900 mb-1">
-                              Prizes are distributed weekly
+                              Earnings paid out weekly
                             </p>
                             <p className="text-sm text-indigo-700 leading-relaxed">
-                              We&apos;ll reach out directly when you win — no action needed on your end.
+                              We&apos;ll send your earnings directly after each weekly cycle. No action needed on your end.
                             </p>
                           </div>
                         </div>
@@ -390,34 +407,30 @@ export default function ContestPage({
                 <div className="flex gap-6 items-start">
                   {/* Left: leaderboard */}
                   <div className="flex-1 min-w-0 flex flex-col gap-4">
-                    {showInactivity && (
-                      <InactivityWarning daysInactive={12} contestId={contest.id} />
-                    )}
 
-                    {/* Rolling leaderboard callout */}
+                    {/* Earn mode callout */}
                     <div className="bg-slate-50 border border-slate-100 rounded-[10px] px-4 py-3 flex items-start gap-2.5">
                       <Infinity className="h-3.5 w-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-slate-500 leading-relaxed">
-                        This competition never ends, but prizes refresh weekly! Your score reflects accuracy, throughput, and consistency across recent work. Rankings update every 4 hours. The current prize cycle closes this Monday.
+                        This is an ongoing competition. Earn ${contest.ratePerRead.toFixed(2)} per qualified read — up to ${contest.earningCap}/wk. Your earning cap resets weekly. Hit your cap, then come back next cycle to keep climbing.
                       </p>
                     </div>
 
                     {/* Filter pills */}
                     <div className="flex items-center gap-1 bg-slate-100 rounded-[8px] p-1 self-start">
-                      {(["humans", "ai", "all"] as LeaderboardFilter[]).map((f) => (
+                      {(["humans", "ai"] as LeaderboardFilter[]).map((f) => (
                         <button
                           key={f}
                           onClick={() => setLbFilter(f)}
                           className={cn(
-                            "flex items-center gap-1.5 h-[28px] px-3 text-xs font-medium rounded-[6px] transition-colors capitalize",
+                            "flex items-center gap-1.5 h-[28px] px-3 text-xs font-medium rounded-[6px] transition-colors",
                             lbFilter === f
                               ? "bg-white text-slate-800 shadow-sm"
                               : "text-slate-500 hover:text-slate-700"
                           )}
                         >
-                          {f === "humans" && <Users className="h-3 w-3" />}
-                          {f === "ai" && <Bot className="h-3 w-3" />}
-                          {f === "humans" ? "Humans" : f === "ai" ? "AI Models" : "All"}
+                          {f === "humans" ? <Users className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
+                          {f === "humans" ? "Humans" : "AI Accuracy"}
                         </button>
                       ))}
                     </div>
@@ -447,7 +460,7 @@ export default function ContestPage({
                         <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
                           <Bot className="h-4 w-4 text-slate-400" />
                           <p className="text-xs font-medium text-slate-500">
-                            Can you beat the AI? These models are scored on the same tasks.
+                            AI accuracy benchmarks — can you outperform these models?
                           </p>
                         </div>
                         <div className="divide-y divide-slate-50 py-1">
@@ -473,73 +486,6 @@ export default function ContestPage({
                         </div>
                       </div>
                     )}
-
-                    {lbFilter === "all" && (
-                      <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-[10px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] overflow-hidden py-1">
-                        {/* Column headers */}
-                        <div className="flex items-center justify-between px-6 pb-2">
-                          <div className="flex items-center gap-4">
-                            <div className="w-6 flex-shrink-0" />
-                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Participant</span>
-                          </div>
-                          <div className="flex items-center gap-5">
-                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Score</span>
-                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide w-16 text-right">Type</span>
-                          </div>
-                        </div>
-                        {/* Combined rows — humans + AI, sorted by score desc */}
-                        {[
-                          ...contest.leaderboard.slice(0, 10).map((e) => ({
-                            name: e.specialistId,
-                            score: e.score,
-                            type: "human" as const,
-                            isCurrentUser: e.isCurrentUser,
-                          })),
-                          ...contest.aiLeaderboard.map((m) => ({
-                            name: m.modelName,
-                            score: m.score,
-                            type: "ai" as const,
-                            isCurrentUser: false,
-                          })),
-                        ]
-                          .sort((a, b) => b.score - a.score)
-                          .map((row, i) => (
-                            <div
-                              key={`${row.type}-${row.name}`}
-                              className={cn(
-                                "flex items-center justify-between px-6 h-[48px] rounded-[10px] transition-colors",
-                                row.isCurrentUser
-                                  ? "bg-[#eef2ff] border border-[#e0e7ff]"
-                                  : "hover:bg-slate-50"
-                              )}
-                            >
-                              <div className="flex items-center gap-4">
-                                <span className="w-6 text-center text-xs font-semibold text-slate-400">{i + 1}</span>
-                                <span className={cn("text-sm", row.isCurrentUser ? "font-extrabold text-slate-800" : "font-medium text-slate-600")}>
-                                  {row.name}
-                                </span>
-                                {row.isCurrentUser && (
-                                  <span className="text-sm font-extrabold text-indigo-600">(You)</span>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-5">
-                                <span className="text-sm font-extrabold text-slate-800">{row.score.toFixed(1)}</span>
-                                <div className="w-16 flex justify-end">
-                                  {row.type === "human" ? (
-                                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
-                                      <Users className="h-2.5 w-2.5" />Human
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                                      <Bot className="h-2.5 w-2.5" />AI
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    )}
                   </div>
 
                   {/* Right: personal rank panel */}
@@ -548,11 +494,12 @@ export default function ContestPage({
                       <PersonalRankPanel
                         rank={currentUserEntry.rank}
                         totalParticipants={totalCount}
-                        score={currentUserEntry.score}
+                        earnings={currentUserEntry.earnings}
+                        earningCap={contest.earningCap}
                         rankChange={currentUserEntry.rankChange}
-                        proximityToNext={proximityToNext}
+                        earningsToNext={earningsToNext}
                         lastActive={currentUserEntry.lastActive}
-                        hasDecayRisk={currentUserEntry.hasDecayRisk}
+                        isCapped={currentUserEntry.isCapped}
                       />
                     ) : (
                       <div className="bg-white border border-slate-100 rounded-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] p-6 flex flex-col items-center gap-4 text-center">
@@ -561,7 +508,7 @@ export default function ContestPage({
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-slate-800 mb-1">Not yet ranked</p>
-                          <p className="text-xs text-slate-500">Complete your first task to claim your rank</p>
+                          <p className="text-xs text-slate-500">Complete your first task to start earning</p>
                         </div>
                         <Link
                           href={`/arena/contest/${contest.id}`}
@@ -578,9 +525,9 @@ export default function ContestPage({
               {/* ── How to Compete ── */}
               {activeTab === "how-to-compete" && (
                 <div className="grid grid-cols-2 gap-8">
-                  {/* Scoring */}
+                  {/* Earn mode rules */}
                   <section>
-                    <h2 className="text-lg font-semibold text-slate-800 mb-4">Scoring</h2>
+                    <h2 className="text-lg font-semibold text-slate-800 mb-4">How Earnings Work</h2>
                     <div className="flex flex-col gap-3">
                       {contest.scoring.map((item, i) => (
                         <div

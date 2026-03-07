@@ -19,12 +19,10 @@ export function ContestCard({ contest }: ContestCardProps) {
             {contest.title}
           </h3>
         </div>
-        {/* Prize pool — prominent */}
-        <div className="text-right flex-shrink-0">
-          <p className="text-xl font-extrabold text-amber-500">{contest.prizePool}</p>
-          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide leading-none mt-0.5">
-            {contest.prizeRefreshPeriod} prize
-          </p>
+        {/* Prize pool */}
+        <div className="text-right flex-shrink-0 flex flex-col gap-[2px]">
+          <p className="text-xl font-bold text-amber-500 leading-none">${contest.earningCap}</p>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">weekly cap</p>
         </div>
       </div>
 

@@ -15,12 +15,8 @@ export default function ArenaPage() {
   const totalPages = Math.ceil(CONTESTS.length / PAGE_SIZE);
   const visibleContests = CONTESTS.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-  const totalPrize = CONTESTS.reduce((sum, c) => {
-    const amount = parseInt(c.prizePool.replace(/\D/g, ""), 10);
-    return sum + (isNaN(amount) ? 0 : amount);
-  }, 0);
-
   const totalSpecialists = Math.max(...CONTESTS.map((c) => c.participantCount));
+  const earningCap = CONTESTS[0].earningCap;
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -46,7 +42,7 @@ export default function ArenaPage() {
                 Specialist Arena
               </h2>
               <p className="text-base text-slate-500 mt-1">
-                Compete against all specialists. Rank by accuracy, throughput &amp; recency.
+                Complete qualified reads, earn per case. Rank by earnings this cycle.
               </p>
             </div>
 
@@ -75,7 +71,7 @@ export default function ArenaPage() {
                 {[
                   { value: `${totalSpecialists}+`, label: "specialists" },
                   { value: `${CONTESTS.length}`, label: "active contests" },
-                  { value: `$${totalPrize}+`, label: "in weekly prizes" },
+                  { value: `Up to $${earningCap}`, label: "per specialist /wk" },
                 ].map(({ value, label }) => (
                   <div
                     key={label}

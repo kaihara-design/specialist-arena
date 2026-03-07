@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LeaderboardEntry } from "@/lib/types";
 import { LeaderboardRankBadge } from "./leaderboard-rank-badge";
@@ -35,56 +35,6 @@ function TrendIndicator({ change }: { change: number }) {
   return <Minus className="h-3 w-3 text-slate-300" />;
 }
 
-function ScoreSlot({ score }: { score: number }) {
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  return (
-    <div className="relative flex items-center gap-1">
-      <span className="text-sm font-extrabold text-slate-800">{score.toFixed(1)}</span>
-      <button
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-        onClick={() => setShowTooltip((v) => !v)}
-        className="text-slate-300 hover:text-slate-500 transition-colors"
-      >
-        <Info className="h-3.5 w-3.5" />
-      </button>
-      {showTooltip && (
-        <div className="absolute bottom-full right-0 mb-2 w-52 bg-white border border-slate-200 rounded-[10px] shadow-lg p-3 z-50 animate-fade-in">
-          <p className="text-xs font-semibold text-slate-500 mb-2">
-            Score breakdown
-          </p>
-          <div className="space-y-2">
-            {[
-              { label: "Accuracy", value: 78 },
-              { label: "Throughput", value: 62 },
-              { label: "Recency", value: 85 },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <div className="flex justify-between mb-0.5">
-                  <span className="text-xs text-slate-500">{label}</span>
-                  <span className="text-xs font-medium text-slate-700">
-                    {value}%
-                  </span>
-                </div>
-                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-indigo-500 rounded-full"
-                    style={{ width: `${value}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] text-slate-400 mt-2">
-            Formula pending confirmation
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function LeaderboardRow({
   entry,
   index,
@@ -93,7 +43,7 @@ function LeaderboardRow({
   index: number;
 }) {
   const isCurrentUser = entry.isCurrentUser;
-  const isDecayRisk = entry.hasDecayRisk;
+  const isCapped = entry.isCapped;
 
   return (
     <div
@@ -101,9 +51,7 @@ function LeaderboardRow({
         "flex items-center justify-between px-6 rounded-[10px] transition-colors",
         isCurrentUser
           ? "h-[60px] bg-[#eef2ff] border border-[#e0e7ff]"
-          : isDecayRisk
-            ? "h-[48px] bg-amber-50 hover:bg-amber-100"
-            : "h-[48px] hover:bg-slate-50",
+          : "h-[48px] hover:bg-slate-50",
         "animate-fade-in"
       )}
       style={{ animationDelay: `${index * 20}ms` }}
@@ -132,17 +80,19 @@ function LeaderboardRow({
               NEW
             </span>
           )}
-          {isDecayRisk && (
+          {isCapped && (
             <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">
-              ⚠ score at risk
+              Capped
             </span>
           )}
         </div>
       </div>
 
-      {/* Right: score + trend + last active */}
+      {/* Right: earnings + trend + last active */}
       <div className="flex items-center gap-5 flex-shrink-0">
-        <ScoreSlot score={entry.score} />
+        <span className="text-sm font-extrabold text-slate-800">
+          ${entry.earnings.toFixed(2)}
+        </span>
         <div className="w-12 flex justify-center">
           <TrendIndicator change={entry.rankChange} />
         </div>
@@ -188,7 +138,7 @@ export function LeaderboardTable({
           </div>
           <div className="flex items-center gap-5">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-              Score
+              Earned
             </span>
             <div className="w-12 text-center">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
@@ -242,7 +192,7 @@ export function LeaderboardTable({
         </span>
         <div className="flex items-center gap-5">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Score
+            Earned
           </span>
           <div className="w-12 text-center">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">

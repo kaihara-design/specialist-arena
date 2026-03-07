@@ -2,12 +2,13 @@ export interface LeaderboardEntry {
   rank: number;
   specialistId: string; // "Specialist 482"
   displayName?: string; // only shown for currentUser row
-  score: number;
-  rankChange: number; // +3, -2, 0 since last snapshot
+  earnings: number;     // $ earned this cycle
+  casesCompleted: number;
+  rankChange: number;   // +3, -2, 0 since last snapshot
   isNew?: boolean;
   lastActive: string;
   isCurrentUser?: boolean;
-  hasDecayRisk?: boolean;
+  isCapped?: boolean;   // hit weekly earning cap
 }
 
 export interface AIModelEntry {
@@ -25,12 +26,15 @@ export interface Contest {
   taskType: string;
   participantCount: number;
   activeSince: string;
-  prizePool: string;
+  prizePool: string;        // display string e.g. "Up to $50"
   prizeRefreshPeriod: string;
   aiModelCount: number;
   centaurBestScore: string;
+  topHumanScore: string;    // accuracy benchmark for overview tab
   prizeCycleDaysLeft: number;
-  prizeStructure: { rank: string; amount: string }[];
+  earnMode: boolean;
+  ratePerRead: number;      // $ per qualified read, e.g. 0.02
+  earningCap: number;       // weekly per-user cap in $, e.g. 50
   scoring: { title: string; body: string }[];
   instructions: string;
   hasPractice: boolean;
