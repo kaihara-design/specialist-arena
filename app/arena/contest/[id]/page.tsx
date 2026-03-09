@@ -334,7 +334,7 @@ export default function ContestPage({
                           {
                             icon: <DollarSign className="h-4 w-4 text-emerald-500" />,
                             label: "Weekly prize pool",
-                            sub: "split proportionally among top performers",
+                            sub: "top 10 ranked specialists share $100",
                             value: `$${contest.prizePoolAmount}`,
                           },
                           {
