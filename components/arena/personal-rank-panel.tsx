@@ -1,31 +1,35 @@
 "use client";
 
-import { TrendingUp, Target, RefreshCw } from "lucide-react";
+import { TrendingUp, Target, RefreshCw, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PersonalRankPanelProps {
   rank: number;
   totalParticipants: number;
-  earnings: number;
-  earningCap: number;
+  score: number;
+  readsThisWeek: number;
+  minReads: number;
+  maxReads: number;
   rankChange: number;
-  earningsToNext: number;
-  lastActive: string;
-  isCapped?: boolean;
+  scoreToNext: number;
+  daysUntilReset: number;
 }
 
 export function PersonalRankPanel({
   rank,
   totalParticipants,
-  earnings,
-  earningCap,
+  score,
+  readsThisWeek,
+  minReads,
+  maxReads,
   rankChange,
-  earningsToNext,
-  lastActive,
-  isCapped,
+  scoreToNext,
+  daysUntilReset,
 }: PersonalRankPanelProps) {
-  const capProgress = Math.min((earnings / earningCap) * 100, 100);
-  const hasEarnings = earnings > 0;
+  const readsProgress = Math.min((readsThisWeek / maxReads) * 100, 100);
+  const isAtMax = readsThisWeek >= maxReads;
+  const isBelowMin = readsThisWeek < minReads;
+  const readsToMin = minReads - readsThisWeek;
 
   return (
     <div className="bg-white border border-slate-100 rounded-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5">
@@ -52,47 +56,54 @@ export function PersonalRankPanel({
         )}
       </div>
 
-      {/* Earnings this cycle */}
+      {/* Score this cycle */}
       <div className="bg-slate-50 rounded-[10px] px-4 py-3">
-        <p className="text-xs font-medium text-slate-400 mb-1">Earned this cycle</p>
+        <p className="text-xs font-medium text-slate-400 mb-1">Score this cycle</p>
         <div className="flex items-end justify-between mb-2">
           <p className="text-2xl font-extrabold text-slate-800">
-            ${earnings.toFixed(2)}
+            {score.toFixed(1)}
           </p>
           <p className="text-xs text-slate-400 mb-0.5">
-            of ${earningCap} cap
+            {readsThisWeek} / {maxReads} reads
           </p>
         </div>
-        {/* Progress bar toward cap */}
+        {/* Reads progress bar */}
         <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
           <div
             className={cn(
               "h-full rounded-full transition-all",
-              isCapped ? "bg-amber-400" : "bg-indigo-500"
+              isAtMax ? "bg-amber-400" : isBelowMin ? "bg-rose-400" : "bg-indigo-500"
             )}
-            style={{ width: `${capProgress}%` }}
+            style={{ width: `${readsProgress}%` }}
           />
         </div>
-        {!hasEarnings && (
+        {isBelowMin && (
           <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
-            Reads are assessed individually. Only qualified reads earn.
+            Complete {readsToMin} more read{readsToMin !== 1 ? "s" : ""} to appear on the leaderboard.
           </p>
         )}
       </div>
 
-      {/* Proximity to next rank OR capped state */}
-      {isCapped ? (
+      {/* Bottom state */}
+      {isAtMax ? (
         <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-[8px] px-3 py-2">
           <RefreshCw className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
           <span>
-            Weekly cap reached — your earnings reset in {4} days
+            Weekly read limit reached — resets in {daysUntilReset} day{daysUntilReset !== 1 ? "s" : ""}
+          </span>
+        </div>
+      ) : isBelowMin ? (
+        <div className="flex items-start gap-2 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-[8px] px-3 py-2">
+          <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+          <span>
+            {readsToMin} more read{readsToMin !== 1 ? "s" : ""} needed to appear on the leaderboard
           </span>
         </div>
       ) : (
         <div className="flex items-center gap-2 text-xs text-slate-500">
           <Target className="h-3.5 w-3.5 text-indigo-400" />
           <span>
-            <span className="font-semibold text-slate-700">${earningsToNext.toFixed(2)}</span>{" "}
+            <span className="font-semibold text-slate-700">{scoreToNext.toFixed(1)} pts</span>{" "}
             to reach rank #{rank - 1}
           </span>
         </div>

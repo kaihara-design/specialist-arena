@@ -43,7 +43,6 @@ function LeaderboardRow({
   index: number;
 }) {
   const isCurrentUser = entry.isCurrentUser;
-  const isCapped = entry.isCapped;
 
   return (
     <div
@@ -80,25 +79,17 @@ function LeaderboardRow({
               NEW
             </span>
           )}
-          {isCapped && (
-            <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">
-              Capped
-            </span>
-          )}
         </div>
       </div>
 
-      {/* Right: earnings + trend + last active */}
+      {/* Right: score + trend */}
       <div className="flex items-center gap-5 flex-shrink-0">
         <span className="text-sm font-extrabold text-slate-800">
-          ${entry.earnings.toFixed(2)}
+          {entry.score.toFixed(1)}
         </span>
         <div className="w-12 flex justify-center">
           <TrendIndicator change={entry.rankChange} />
         </div>
-        <span className="text-xs text-slate-400 w-16 text-right">
-          {entry.lastActive}
-        </span>
       </div>
     </div>
   );
@@ -138,16 +129,13 @@ export function LeaderboardTable({
           </div>
           <div className="flex items-center gap-5">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-              Earned
+              Score
             </span>
             <div className="w-12 text-center">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                 Trend
               </span>
             </div>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide w-16 text-right">
-              Last active
-            </span>
           </div>
         </div>
 
@@ -192,16 +180,13 @@ export function LeaderboardTable({
         </span>
         <div className="flex items-center gap-5">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Earned
+            Score
           </span>
           <div className="w-12 text-center">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
               Trend
             </span>
           </div>
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide w-16 text-right">
-            Last active
-          </span>
         </div>
       </div>
 
