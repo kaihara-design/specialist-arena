@@ -45,8 +45,8 @@ export default function ContestPage({
   const totalCount = contest.participantCount;
   const currentUserRank = currentUserEntry?.rank ?? 0;
   const entryAbove = contest.leaderboard.find((e) => e.rank === currentUserRank - 1);
-  const earningsToNext =
-    entryAbove && currentUserEntry ? entryAbove.earnings - currentUserEntry.earnings : 0.5;
+  const scoreToNext =
+    entryAbove && currentUserEntry ? entryAbove.score - currentUserEntry.score : 0.5;
   const top3 = contest.leaderboard.filter((e) => e.rank <= 3);
   const topAI = contest.aiLeaderboard[0];
 
@@ -135,15 +135,14 @@ export default function ContestPage({
               className="bg-white border border-slate-100 rounded-b-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)] animate-fade-in"
               style={{ animationDelay: "40ms" }}
             >
-              <div className="grid grid-cols-4 divide-x divide-slate-100">
+              <div className="grid grid-cols-3 divide-x divide-slate-100">
                 {[
-                  { label: "Weekly Cap", value: `$${contest.earningCap}`, sub: "per specialist" },
+                  { label: "Prize Pool", value: `$${contest.prizePoolAmount}`, sub: "weekly prize pool" },
                   { label: "Participants", value: `${contest.participantCount}`, sub: "specialists" },
-                  { label: "Rate", value: `$${contest.ratePerRead.toFixed(2)}`, sub: "per qualified read" },
                   {
-                    label: "Earnings Cap Resets In",
+                    label: "Resets In",
                     value: `${contest.prizeCycleDaysLeft}d`,
-                    sub: "current cycle",
+                    sub: "resets each Monday",
                     highlight: contest.prizeCycleDaysLeft <= 2,
                   },
                 ].map(({ label, value, sub, highlight }) => (
@@ -325,7 +324,7 @@ export default function ContestPage({
 
                   {/* How You Earn + Payouts — side by side */}
                   <div className="grid grid-cols-2 gap-6 items-start">
-                    {/* Earn mode info */}
+                    {/* Prize pool info */}
                     <section>
                       <h2 className="text-lg font-semibold text-slate-800 mb-3">
                         How You Earn
@@ -334,21 +333,21 @@ export default function ContestPage({
                         {[
                           {
                             icon: <DollarSign className="h-4 w-4 text-emerald-500" />,
-                            label: "Rate per read",
-                            sub: "for each qualified read submitted",
-                            value: `$${contest.ratePerRead.toFixed(2)}`,
+                            label: "Weekly prize pool",
+                            sub: "split proportionally among top performers",
+                            value: `$${contest.prizePoolAmount}`,
                           },
                           {
                             icon: <Zap className="h-4 w-4 text-amber-500" />,
-                            label: "Weekly cap",
-                            sub: "maximum per specialist per cycle",
-                            value: `$${contest.earningCap}`,
+                            label: "Min reads",
+                            sub: "complete at least 20 reads to appear on the leaderboard",
+                            value: `${contest.minReads}`,
                           },
                           {
                             icon: <RefreshCw className="h-4 w-4 text-indigo-400" />,
-                            label: "Cap resets",
-                            sub: "earn fresh every Monday",
-                            value: "Weekly",
+                            label: "Max reads",
+                            sub: "weekly read limit — resets each Monday",
+                            value: `${contest.maxReads}`,
                           },
                         ].map(({ icon, label, sub, value }, i, arr) => (
                           <div
@@ -371,15 +370,15 @@ export default function ContestPage({
                           </div>
                         ))}
                         <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
-                          <p className="text-xs text-slate-400">Earnings paid out after each weekly cycle closes</p>
+                          <p className="text-xs text-slate-400">Prizes paid out after each weekly cycle closes</p>
                         </div>
                       </div>
                     </section>
 
-                    {/* Payouts */}
+                    {/* Prize incentive */}
                     <section>
                       <h2 className="text-lg font-semibold text-slate-800 mb-3">
-                        Payouts
+                        Prize Pool
                       </h2>
                       <div className="bg-indigo-50 border border-indigo-100 rounded-[14px] p-5 flex flex-col gap-3">
                         <div className="flex items-start gap-3">
@@ -388,10 +387,11 @@ export default function ContestPage({
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-indigo-900 mb-1">
-                              Earnings paid out weekly
+                              Top performers share the prize each week
                             </p>
                             <p className="text-sm text-indigo-700 leading-relaxed">
-                              We&apos;ll send your earnings directly after each weekly cycle. No action needed on your end.
+                              Each week, the top 10 specialists split $100. The higher you rank, the bigger your share. Climb by labeling accurately and staying active. If you finish in the top 10, you&apos;ll receive an{" "}
+                              <span className="font-semibold text-indigo-900">email</span> with prize details.
                             </p>
                           </div>
                         </div>
@@ -408,11 +408,11 @@ export default function ContestPage({
                   {/* Left: leaderboard */}
                   <div className="flex-1 min-w-0 flex flex-col gap-4">
 
-                    {/* Earn mode callout */}
+                    {/* Score mode callout */}
                     <div className="bg-slate-50 border border-slate-100 rounded-[10px] px-4 py-3 flex items-start gap-2.5">
                       <Infinity className="h-3.5 w-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-slate-500 leading-relaxed">
-                        This is an ongoing competition. Earn ${contest.ratePerRead.toFixed(2)} per qualified read — up to ${contest.earningCap}/wk. Your earning cap resets weekly. Hit your cap, then come back next cycle to keep climbing.
+                        Your score is based on accuracy, weighted by recency. Complete at least 20 reads this week to appear on the leaderboard. The top 10 ranked specialists share the $100 weekly prize.
                       </p>
                     </div>
 
@@ -494,12 +494,13 @@ export default function ContestPage({
                       <PersonalRankPanel
                         rank={currentUserEntry.rank}
                         totalParticipants={totalCount}
-                        earnings={currentUserEntry.earnings}
-                        earningCap={contest.earningCap}
+                        score={currentUserEntry.score}
+                        readsThisWeek={currentUserEntry.readsThisWeek}
+                        minReads={contest.minReads}
+                        maxReads={contest.maxReads}
                         rankChange={currentUserEntry.rankChange}
-                        earningsToNext={earningsToNext}
-                        lastActive={currentUserEntry.lastActive}
-                        isCapped={currentUserEntry.isCapped}
+                        scoreToNext={scoreToNext}
+                        daysUntilReset={contest.prizeCycleDaysLeft}
                       />
                     ) : (
                       <div className="bg-white border border-slate-100 rounded-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] p-6 flex flex-col items-center gap-4 text-center">
@@ -525,9 +526,9 @@ export default function ContestPage({
               {/* ── How to Compete ── */}
               {activeTab === "how-to-compete" && (
                 <div className="grid grid-cols-2 gap-8">
-                  {/* Earn mode rules */}
+                  {/* Scoring rules */}
                   <section>
-                    <h2 className="text-lg font-semibold text-slate-800 mb-4">How Earnings Work</h2>
+                    <h2 className="text-lg font-semibold text-slate-800 mb-4">How Scoring Works</h2>
                     <div className="flex flex-col gap-3">
                       {contest.scoring.map((item, i) => (
                         <div

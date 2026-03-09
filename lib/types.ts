@@ -1,14 +1,15 @@
 export interface LeaderboardEntry {
   rank: number;
-  specialistId: string; // "Specialist 482"
-  displayName?: string; // only shown for currentUser row
-  earnings: number;     // $ earned this cycle
+  specialistId: string;     // "Specialist 482"
+  displayName?: string;     // only shown for currentUser row
+  score: number;            // time-decayed accuracy score, e.g. 87.4
+  readsThisWeek: number;    // toward min (20) / max (100)
   casesCompleted: number;
-  rankChange: number;   // +3, -2, 0 since last snapshot
+  rankChange: number;       // +3, -2, 0 since last snapshot
   isNew?: boolean;
   lastActive: string;
   isCurrentUser?: boolean;
-  isCapped?: boolean;   // hit weekly earning cap
+  isBelowMinReads?: boolean; // not shown on leaderboard; shown only to self
 }
 
 export interface AIModelEntry {
@@ -26,15 +27,15 @@ export interface Contest {
   taskType: string;
   participantCount: number;
   activeSince: string;
-  prizePool: string;        // display string e.g. "Up to $50"
+  prizePool: string;            // display string e.g. "$100 Prize Pool"
   prizeRefreshPeriod: string;
+  prizePoolAmount: number;      // 100
+  minReads: number;             // 20 — min reads/week to appear on leaderboard
+  maxReads: number;             // 100 — hard weekly read cap
   aiModelCount: number;
   centaurBestScore: string;
-  topHumanScore: string;    // accuracy benchmark for overview tab
+  topHumanScore: string;
   prizeCycleDaysLeft: number;
-  earnMode: boolean;
-  ratePerRead: number;      // $ per qualified read, e.g. 0.02
-  earningCap: number;       // weekly per-user cap in $, e.g. 50
   scoring: { title: string; body: string }[];
   instructions: string;
   hasPractice: boolean;

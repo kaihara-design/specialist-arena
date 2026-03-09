@@ -69,7 +69,7 @@ export default function HomePage() {
                 </Link>
               </div>
               <p className="text-sm text-slate-500 mb-4">
-                Join hundreds of specialists competing in open-to-all annotation challenges. Complete more, earn more.
+                Join hundreds of specialists competing in open-to-all annotation challenges. Compete more, rank higher.
               </p>
 
               {/* Contest snapshot — 3 fixed cards */}
@@ -86,7 +86,7 @@ export default function HomePage() {
                         {contest.taskType}
                       </span>
                       <p className="text-base font-medium text-slate-400 flex-shrink-0">
-                        <span className="text-lg font-bold text-amber-500">${contest.earningCap}</span><span className="text-xs font-semibold uppercase tracking-wide">/WK</span>
+                        <span className="text-xl font-extrabold text-amber-500">${contest.prizePoolAmount}</span><span className="text-[10px] font-medium uppercase tracking-wide"> pool</span>
                       </p>
                     </div>
 

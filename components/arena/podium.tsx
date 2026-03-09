@@ -58,7 +58,7 @@ export function Podium({ top3 }: PodiumProps) {
                 {entry.specialistId}
               </p>
               <p className="text-sm font-extrabold text-slate-800 mt-0.5">
-                ${entry.earnings.toFixed(2)}
+                {entry.score.toFixed(1)}
               </p>
             </div>
             {entry.rankChange !== 0 && (
