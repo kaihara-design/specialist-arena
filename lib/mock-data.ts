@@ -1,5 +1,12 @@
 import type { Contest, CurrentUser, LeaderboardEntry, AIModelEntry } from "./types";
 
+export const PRIZE_BREAKDOWN: { rank: number; prize: number }[] = [
+  { rank: 1, prize: 30 }, { rank: 2, prize: 20 }, { rank: 3, prize: 15 },
+  { rank: 4, prize: 10 }, { rank: 5, prize: 8  }, { rank: 6, prize: 6  },
+  { rank: 7, prize: 4  }, { rank: 8, prize: 3  }, { rank: 9, prize: 2  },
+  { rank: 10, prize: 2 },
+];
+
 export const CURRENT_USER: CurrentUser = {
   id: "874",
   displayName: "Jane Liam",

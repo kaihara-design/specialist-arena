@@ -7,7 +7,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { LeaderboardTable } from "@/components/arena/leaderboard-table";
 import { PersonalRankPanel } from "@/components/arena/personal-rank-panel";
 import { Podium } from "@/components/arena/podium";
-import { CONTESTS, SNAPSHOT_INFO, CURRENT_USER } from "@/lib/mock-data";
+import { CONTESTS, SNAPSHOT_INFO, CURRENT_USER, PRIZE_BREAKDOWN } from "@/lib/mock-data";
 import {
   ArrowLeft,
   Users,
@@ -135,10 +135,9 @@ export default function ContestPage({
               className="bg-white border border-slate-100 rounded-b-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)] animate-fade-in"
               style={{ animationDelay: "40ms" }}
             >
-              <div className="grid grid-cols-3 divide-x divide-slate-100">
+              <div className="grid grid-cols-2 divide-x divide-slate-100">
                 {[
                   { label: "Prize Pool", value: `$${contest.prizePoolAmount}`, sub: "weekly prize pool" },
-                  { label: "Participants", value: `${contest.participantCount}`, sub: "specialists" },
                   {
                     label: "Resets In",
                     value: `${contest.prizeCycleDaysLeft}d`,
@@ -375,25 +374,50 @@ export default function ContestPage({
                       </div>
                     </section>
 
-                    {/* Prize incentive */}
+                    {/* Prize breakdown */}
                     <section>
                       <h2 className="text-lg font-semibold text-slate-800 mb-3">
                         Prize Pool
                       </h2>
-                      <div className="bg-indigo-50 border border-indigo-100 rounded-[14px] p-5 flex flex-col gap-3">
-                        <div className="flex items-start gap-3">
-                          <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Mail className="h-4 w-4 text-indigo-600" />
+                      <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-5 py-2.5 bg-slate-50 border-b border-slate-100">
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Place</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Prize</span>
+                        </div>
+                        {PRIZE_BREAKDOWN.map(({ rank, prize }, i) => (
+                          <div
+                            key={rank}
+                            className={cn(
+                              "flex items-center justify-between px-5 py-2.5",
+                              i < PRIZE_BREAKDOWN.length - 1 && "border-b border-slate-50"
+                            )}
+                          >
+                            <span className="text-sm font-medium text-slate-600">
+                              {rank === 1 ? "1st" : rank === 2 ? "2nd" : rank === 3 ? "3rd" : `${rank}th`}
+                            </span>
+                            <span className="text-sm font-bold text-amber-500">${prize}</span>
                           </div>
-                          <div>
-                            <p className="text-sm font-semibold text-indigo-900 mb-1">
-                              Top performers share the prize each week
-                            </p>
-                            <p className="text-sm text-indigo-700 leading-relaxed">
-                              Each week, the top 10 specialists split $100. The higher you rank, the bigger your share. Climb by labeling accurately and staying active. If you finish in the top 10, you&apos;ll receive an{" "}
-                              <span className="font-semibold text-indigo-900">email</span> with prize details.
-                            </p>
-                          </div>
+                        ))}
+                        {/* Total row */}
+                        <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50">
+                          <span className="text-sm font-bold text-slate-700">Total</span>
+                          <span className="text-sm font-extrabold text-slate-800">$100</span>
+                        </div>
+                      </div>
+                      {/* Callout */}
+                      <div className="bg-indigo-50 border border-indigo-100 rounded-[14px] p-5 flex items-start gap-3 mt-3">
+                        <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Mail className="h-4 w-4 text-indigo-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-indigo-900 mb-1">
+                            Top performers share the prize each week
+                          </p>
+                          <p className="text-sm text-indigo-700 leading-relaxed">
+                            Each week, the top 10 specialists split $100. The higher you rank, the bigger your share. Climb by labeling accurately and staying active. If you finish in the top 10, you&apos;ll receive an{" "}
+                            <span className="font-semibold text-indigo-900">email</span> with prize details.
+                          </p>
                         </div>
                       </div>
                     </section>

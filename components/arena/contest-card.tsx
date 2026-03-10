@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Users, Bot } from "lucide-react";
+import { Bot } from "lucide-react";
 import type { Contest } from "@/lib/types";
 
 interface ContestCardProps {
@@ -36,10 +36,6 @@ export function ContestCard({ contest }: ContestCardProps) {
 
       {/* Meta */}
       <div className="flex items-center gap-4 text-xs text-slate-400 mt-auto">
-        <span className="flex items-center gap-1.5">
-          <Users className="h-3.5 w-3.5" />
-          {contest.participantCount} specialists
-        </span>
         <span className="flex items-center gap-1.5">
           <Bot className="h-3.5 w-3.5" />
           {contest.aiModelCount} AI models competing

@@ -1,7 +1,8 @@
 "use client";
 
-import { TrendingUp, Target, RefreshCw, AlertCircle } from "lucide-react";
+import { TrendingUp, Target, RefreshCw, AlertCircle, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PRIZE_BREAKDOWN } from "@/lib/mock-data";
 
 interface PersonalRankPanelProps {
   rank: number;
@@ -30,6 +31,7 @@ export function PersonalRankPanel({
   const isAtMax = readsThisWeek >= maxReads;
   const isBelowMin = readsThisWeek < minReads;
   const readsToMin = minReads - readsThisWeek;
+  const potentialEarning = PRIZE_BREAKDOWN.find((p) => p.rank === rank)?.prize ?? null;
 
   return (
     <div className="bg-white border border-slate-100 rounded-[14px] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5">
@@ -83,6 +85,17 @@ export function PersonalRankPanel({
           </p>
         )}
       </div>
+
+      {/* Earning potential */}
+      {potentialEarning !== null && !isBelowMin && (
+        <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-[8px] px-3 py-2">
+          <DollarSign className="h-3.5 w-3.5 flex-shrink-0" />
+          <span>
+            You&apos;re on track to earn{" "}
+            <span className="font-bold">${potentialEarning}</span> this week
+          </span>
+        </div>
+      )}
 
       {/* Bottom state */}
       {isAtMax ? (

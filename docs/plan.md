@@ -3,7 +3,7 @@
 ## Product vision
 A specialist-facing web portal for competing in open medical annotation challenges.
 Specialists rank against each other and AI models by time-decayed accuracy score.
-Top performers share a $100 weekly prize pool proportionally by score. Entry is open to all — no invite required.
+The top 10 ranked specialists share a $100 weekly prize pool each week, with rank #1 earning the most. Entry is open to all — no invite required.
 
 ---
 
@@ -14,7 +14,7 @@ Specialists earn rank by competing, not by direct pay-per-read. The model:
 - **Score**: Time-decayed accuracy score. Halves in value after one week — recency matters.
 - **Min reads (20/week)**: Must complete at least 20 reads in the current cycle to appear on the leaderboard.
 - **Max reads (100/week)**: Hard cap. No further reads accepted after 100. Resets each Monday.
-- **Prize pool**: $100/week, split proportionally among top performers by score.
+- **Prize pool**: $100/week, shared among the top 10 ranked specialists. Rank #1 earns the most; each position below receives a smaller share.
 - **Tie-breaking**: Higher `readsThisWeek` breaks ties at equal scores.
 - **Score visibility**: Score is revealed when a specialist views the leaderboard or exits a labeling session — not shown live during labeling.
 
@@ -134,3 +134,6 @@ Min/max reads and prize details appear in How You Earn and How to Compete tabs. 
 ### Prize Pool panel body (contest page)
 > "Each week, the top 10 specialists split $100. The higher you rank, the bigger your share. Climb by labeling accurately and staying active. If you finish in the top 10, you'll receive an **email** with prize details."
 *(Note: "email" rendered `font-semibold text-indigo-900` in the UI)*
+
+### How You Earn — Weekly prize pool sub-label (contest page)
+> "top 10 ranked specialists share $100"

@@ -15,7 +15,6 @@ export default function ArenaPage() {
   const totalPages = Math.ceil(CONTESTS.length / PAGE_SIZE);
   const visibleContests = CONTESTS.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-  const totalSpecialists = Math.max(...CONTESTS.map((c) => c.participantCount));
   const prizePoolAmount = CONTESTS[0].prizePoolAmount;
 
   return (
@@ -69,7 +68,6 @@ export default function ArenaPage() {
               </div>
               <div className="relative z-10 flex flex-col gap-2 flex-shrink-0">
                 {[
-                  { value: `${totalSpecialists}+`, label: "specialists" },
                   { value: `${CONTESTS.length}`, label: "active contests" },
                   { value: `$${prizePoolAmount}`, label: "weekly prize pool" },
                 ].map(({ value, label }) => (

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LeaderboardEntry } from "@/lib/types";
+import { PRIZE_BREAKDOWN } from "@/lib/mock-data";
 import { LeaderboardRankBadge } from "./leaderboard-rank-badge";
 import { SnapshotTimestamp } from "./snapshot-timestamp";
 
@@ -14,25 +14,6 @@ interface LeaderboardTableProps {
   lastUpdated: string;
   nextRefresh: string;
   showLoadMore?: boolean;
-}
-
-function TrendIndicator({ change }: { change: number }) {
-  if (change > 0) {
-    return (
-      <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-600">
-        <TrendingUp className="h-3 w-3" />+{change}
-      </span>
-    );
-  }
-  if (change < 0) {
-    return (
-      <span className="inline-flex items-center gap-0.5 text-xs font-medium text-red-500">
-        <TrendingDown className="h-3 w-3" />
-        {change}
-      </span>
-    );
-  }
-  return <Minus className="h-3 w-3 text-slate-300" />;
 }
 
 function LeaderboardRow({
@@ -82,13 +63,44 @@ function LeaderboardRow({
         </div>
       </div>
 
-      {/* Right: score + trend */}
+      {/* Right: prize + score */}
       <div className="flex items-center gap-5 flex-shrink-0">
-        <span className="text-sm font-extrabold text-slate-800">
-          {entry.score.toFixed(1)}
+        <div className="w-12 text-center">
+          {PRIZE_BREAKDOWN.find((p) => p.rank === entry.rank) ? (
+            <span className="text-xs font-bold text-amber-500">
+              ${PRIZE_BREAKDOWN.find((p) => p.rank === entry.rank)!.prize}
+            </span>
+          ) : null}
+        </div>
+        <div className="w-14 text-center">
+          <span className="text-sm font-extrabold text-slate-800">
+            {entry.score.toFixed(1)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ColumnHeaders() {
+  return (
+    <div className="flex items-center justify-between px-6 pb-2">
+      <div className="flex items-center gap-4">
+        <div className="w-6 flex-shrink-0" />
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+          Specialist
         </span>
-        <div className="w-12 flex justify-center">
-          <TrendIndicator change={entry.rankChange} />
+      </div>
+      <div className="flex items-center gap-5">
+        <div className="w-12 text-center">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+            Prize
+          </span>
+        </div>
+        <div className="w-14 text-center">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+            Score
+          </span>
         </div>
       </div>
     </div>
@@ -118,26 +130,8 @@ export function LeaderboardTable({
     const hasMore = topEntries.length > 10 && !showAll;
 
     return (
-      <div>
-        {/* Column headers */}
-        <div className="flex items-center justify-between px-6 pb-2">
-          <div className="flex items-center gap-4">
-            <div className="w-6 flex-shrink-0" />
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-              Specialist
-            </span>
-          </div>
-          <div className="flex items-center gap-5">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-              Score
-            </span>
-            <div className="w-12 text-center">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-                Trend
-              </span>
-            </div>
-          </div>
-        </div>
+      <div className="pt-4">
+        <ColumnHeaders />
 
         <div className="flex flex-col gap-1">
           {visibleEntries.map((entry, i) => (
@@ -172,23 +166,8 @@ export function LeaderboardTable({
   );
 
   return (
-    <div>
-      {/* Column headers */}
-      <div className="flex items-center justify-between px-6 pb-2">
-        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-          Specialist
-        </span>
-        <div className="flex items-center gap-5">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Score
-          </span>
-          <div className="w-12 text-center">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-              Trend
-            </span>
-          </div>
-        </div>
-      </div>
+    <div className="pt-4">
+      <ColumnHeaders />
 
       {/* TOP PERFORMERS section */}
       <div className="flex items-center px-6 py-3">

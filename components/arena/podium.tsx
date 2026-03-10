@@ -1,6 +1,5 @@
 import type { LeaderboardEntry } from "@/lib/types";
-import { LeaderboardRankBadge } from "./leaderboard-rank-badge";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { PRIZE_BREAKDOWN } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 interface PodiumProps {
@@ -11,74 +10,64 @@ const podiumConfig = [
   {
     rank: 2,
     order: 0,
-    height: "h-[120px]",
-    bg: "bg-gradient-to-b from-slate-50 to-slate-100",
-    border: "border-slate-200",
-    label: "2nd",
+    blockHeight: "h-[68px]",
+    blockBg: "bg-gradient-to-b from-slate-300 to-slate-400",
+    rankText: "text-slate-50",
   },
   {
     rank: 1,
     order: 1,
-    height: "h-[148px]",
-    bg: "bg-gradient-to-b from-amber-50 to-amber-100",
-    border: "border-amber-200",
-    label: "1st",
+    blockHeight: "h-[90px]",
+    blockBg: "bg-gradient-to-b from-amber-300 to-amber-400",
+    rankText: "text-amber-50",
   },
   {
     rank: 3,
     order: 2,
-    height: "h-[100px]",
-    bg: "bg-gradient-to-b from-orange-50 to-orange-100",
-    border: "border-orange-200",
-    label: "3rd",
+    blockHeight: "h-[52px]",
+    blockBg: "bg-gradient-to-b from-orange-300 to-orange-400",
+    rankText: "text-orange-50",
   },
 ];
 
 export function Podium({ top3 }: PodiumProps) {
   return (
     <div className="flex items-end gap-3 justify-center">
-      {podiumConfig.map(({ rank, order, height, bg, border }) => {
+      {podiumConfig.map(({ rank, order, blockHeight, blockBg, rankText }) => {
         const entry = top3.find((e) => e.rank === rank);
         if (!entry) return null;
+
+        const prize = PRIZE_BREAKDOWN.find((p) => p.rank === rank)?.prize;
 
         return (
           <div
             key={rank}
-            className={cn(
-              "flex-1 max-w-[200px] border rounded-[14px] p-4 flex flex-col items-center justify-end gap-2 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] animate-fade-in",
-              height,
-              bg,
-              border
-            )}
+            className="flex-1 max-w-[200px] flex flex-col items-center animate-fade-in"
             style={{ animationDelay: `${order * 80}ms` }}
           >
-            <LeaderboardRankBadge rank={rank} size="md" />
-            <div className="text-center">
-              <p className="text-xs font-semibold text-slate-700 leading-tight">
-                {entry.specialistId}
-              </p>
-              <p className="text-sm font-extrabold text-slate-800 mt-0.5">
-                {entry.score.toFixed(1)}
-              </p>
-            </div>
-            {entry.rankChange !== 0 && (
-              <div
-                className={cn(
-                  "flex items-center gap-0.5 text-[10px] font-medium",
-                  entry.rankChange > 0
-                    ? "text-emerald-600"
-                    : "text-red-500"
-                )}
-              >
-                {entry.rankChange > 0 ? (
-                  <TrendingUp className="h-3 w-3" />
-                ) : (
-                  <TrendingDown className="h-3 w-3" />
-                )}
-                {entry.rankChange > 0 ? "+" : ""}
-                {entry.rankChange}
-              </div>
+            {/* Info above block */}
+            <p className="text-xs font-semibold text-slate-700 leading-tight text-center truncate w-full mb-0.5">
+              {entry.specialistId}
+            </p>
+            <p className="text-sm font-extrabold text-slate-800">
+              {entry.score.toFixed(1)}
+            </p>
+            {prize && (
+              <p className="text-xs font-bold text-amber-500 mb-3">${prize}</p>
             )}
+
+            {/* Podium block */}
+            <div
+              className={cn(
+                "w-full rounded-t-[10px] flex items-center justify-center",
+                blockHeight,
+                blockBg
+              )}
+            >
+              <span className={cn("text-2xl font-black", rankText)}>
+                {rank}
+              </span>
+            </div>
           </div>
         );
       })}
