@@ -240,85 +240,90 @@ export default function ContestPage({
 
                   {/* Accuracy Benchmarks */}
                   <section>
-                    <h2 className="text-lg font-semibold text-slate-800 mb-3">
-                      Accuracy Benchmarks
+                    <h2 className="text-lg font-semibold text-slate-800 mb-1">
+                      Every case you label makes the collective smarter
                     </h2>
-                    <div className="grid grid-cols-3 gap-4">
-                      {/* Centaur card */}
-                      <div className="bg-gradient-to-br from-[#290D4D] to-[#201B4E] rounded-[14px] p-5 relative overflow-hidden">
-                        <div
-                          className="absolute inset-0 opacity-[0.05]"
-                          style={{
-                            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-                            backgroundSize: "20px 20px",
-                          }}
-                        />
-                        <div className="relative z-10">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="h-7 w-7 rounded-full bg-white/10 flex items-center justify-center">
-                              <Zap className="h-3.5 w-3.5 text-amber-300" />
-                            </div>
-                            <div>
-                              <p className="text-[10px] font-bold uppercase tracking-wide text-indigo-300">
-                                Current Best
-                              </p>
-                              <p className="text-xs font-semibold text-white">
-                                Centaur Collective
-                              </p>
-                            </div>
-                          </div>
-                          <p className="text-3xl font-extrabold text-white">
-                            {contest.centaurBestScore}
-                          </p>
-                          <p className="text-[11px] text-indigo-300 mt-1">Accuracy score</p>
-                        </div>
-                      </div>
-
-                      {/* Top Human card */}
-                      <div className="bg-white border border-slate-100 rounded-[14px] p-5 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="h-7 w-7 rounded-full bg-indigo-50 flex items-center justify-center">
-                            <Users className="h-3.5 w-3.5 text-indigo-500" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                              Top Human
-                            </p>
-                            <p className="text-xs font-semibold text-slate-700">
-                              Best individual
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-3xl font-extrabold text-slate-800">
-                          {contest.topHumanScore}
-                        </p>
-                        <p className="text-[11px] text-slate-400 mt-1">Accuracy score</p>
-                      </div>
-
-                      {/* Top AI card */}
-                      <div className="bg-white border border-slate-100 rounded-[14px] p-5 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center">
-                            <Bot className="h-3.5 w-3.5 text-slate-500" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                              Top AI Model
-                            </p>
-                            <p className="text-xs font-semibold text-slate-700">
-                              {topAI.modelName}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-3xl font-extrabold text-slate-800">
-                          {topAI.score.toFixed(1)}
-                        </p>
-                        <p className="text-[11px] text-slate-400 mt-1">Accuracy score</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-3 leading-relaxed">
+                    <p className="text-sm text-slate-500 mb-5">
                       Centaur&apos;s algorithm consistently surpasses every individual by aggregating top specialists into a consensus answer.
                     </p>
+
+                    {(() => {
+                      const centaurScore = parseFloat(String(contest.centaurBestScore));
+                      const humanScore = parseFloat(String(contest.topHumanScore));
+                      const toBarWidth = (score: number) =>
+                        `${Math.min(Math.max(score, 0), 100)}%`;
+                      const rows = [
+                        {
+                          label: "Centaur Collective",
+                          sublabel: "Aggregated consensus",
+                          score: centaurScore,
+                          fill: "bg-gradient-to-r from-indigo-500 to-purple-500",
+                          scoreColor: "text-indigo-600",
+                          isCentaur: true,
+                          delay: 0,
+                        },
+                        {
+                          label: "Top Human",
+                          sublabel: "Best individual specialist",
+                          score: humanScore,
+                          fill: "bg-rose-300",
+                          scoreColor: "text-slate-800",
+                          isCentaur: false,
+                          delay: 100,
+                        },
+                        {
+                          label: topAI.modelName,
+                          sublabel: "Top AI model",
+                          score: topAI.score,
+                          fill: "bg-blue-300",
+                          scoreColor: "text-slate-800",
+                          isCentaur: false,
+                          delay: 200,
+                        },
+                      ];
+                      return (
+                        <div className="bg-white border border-slate-100 rounded-[14px] p-5 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
+                          <div className="flex flex-col gap-5">
+                            {rows.map((row) => (
+                              <div
+                                key={row.label}
+                                className="flex items-center gap-4 animate-fade-in"
+                                style={{ animationDelay: `${row.delay}ms` }}
+                              >
+                                {/* Label */}
+                                <div className="w-44 flex-shrink-0">
+                                  <div className="flex items-center gap-1.5 flex-nowrap">
+                                    <span className={cn("text-sm font-semibold whitespace-nowrap", row.isCentaur ? "text-slate-800" : "text-slate-700")}>
+                                      {row.label}
+                                    </span>
+                                    {row.isCentaur && (
+                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-full px-1.5 py-0.5 leading-none">
+                                        <Zap className="h-2.5 w-2.5" />
+                                        Best
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-slate-400 mt-0.5">{row.sublabel}</p>
+                                </div>
+                                {/* Bar */}
+                                <div className="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
+                                  <div
+                                    className={cn("h-full rounded-full", row.fill)}
+                                    style={{ width: toBarWidth(row.score) }}
+                                  />
+                                </div>
+                                {/* Score */}
+                                <div className="w-12 text-right">
+                                  <span className={cn("text-sm font-extrabold", row.scoreColor)}>
+                                    {row.score.toFixed(1)}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </section>
 
                   {/* How You Earn + Payouts — side by side */}

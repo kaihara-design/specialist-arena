@@ -9,7 +9,7 @@ Node via fnm. To activate: `eval "$(/Users/kaihara/.local/bin/fnm env --shell zs
 Then: `npm run dev` — serves on port 3000.
 
 ## Current branch
-`main`
+`feature/accuracy-benchmark` (in review — not yet merged to main)
 
 ---
 
@@ -44,7 +44,7 @@ Individual contest detail page.
   - `hasPracticed`: "Practice" (secondary outline) + "Join Competition" (primary indigo, unlocked)
 - **Stats strip**: 2 columns — Prize Pool · Resets In (participant count removed)
 - **3 tabs**: Overview · Leaderboard · How to Compete
-  - **Overview**: About section, Centaur/Top Human/Top AI performance cards, How You Earn panel, Prize Pool panel (breakdown table: 10 rows + Total row) + indigo callout below
+  - **Overview**: About section, accuracy benchmark bar chart (see below), How You Earn panel, Prize Pool panel (breakdown table: 10 rows + Total row) + indigo callout below
   - **Leaderboard**: Score mode callout, Humans/AI/All filter tabs, Podium (top 3), LeaderboardTable, PersonalRankPanel (sticky right sidebar, w-280px)
   - **How to Compete**: Scoring rules cards (from `contest.scoring`), "View Task Instructions" button → centered modal (BookOpen icon, dark backdrop, scrollable, X close + backdrop close)
 - **AI leaderboard**: footer note "AI evaluations run weekly — more models coming soon"
@@ -122,6 +122,28 @@ CURRENT_USER = { id: "874", displayName: "Jane Liam", initials: "JL", email: "jl
 ### Snapshot info
 ```ts
 SNAPSHOT_INFO = { lastUpdated: "2h ago", nextRefresh: "~4h" }
+```
+
+---
+
+## Accuracy Benchmark Section — `app/arena/contest/[id]/page.tsx`
+
+Replaced the old 3-card grid (Centaur / Top Human / Top AI score cards) with a horizontal bar chart in the contest Overview tab.
+
+### Design decisions
+- **Headline framing**: Specialist-motivation angle — "Every case you label makes the collective smarter" (shifted from performance boast to contribution framing)
+- **Bar scale**: 0–100 (true scale, not zoomed baseline) — decided to keep honest scale over exaggerated gap
+- **Bar colors**: Centaur = indigo→purple gradient (brand primary) · Human = `rose-300` (warm, organic) · AI = `blue-300` (cool, mechanical) — warm/cool contrast communicates human vs algorithm
+- **"Best" badge**: Zap icon + indigo-50 bg, indigo text — consistent with design system badge patterns
+- **Delta callout**: Removed — replaced bar chart stands alone without explicit delta comparison
+- **Label column**: `whitespace-nowrap` on "Centaur Collective" to prevent wrapping
+
+### Current state (branch: `feature/accuracy-benchmark`)
+```
+Heading:  "Every case you label makes the collective smarter"
+Subtitle: "Centaur's algorithm consistently surpasses every individual by aggregating top specialists into a consensus answer."
+Bar cols: [w-44 label] [flex-1 h-4 track] [w-12 score]
+Callout:  (removed)
 ```
 
 ---
