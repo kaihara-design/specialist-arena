@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { TaskCard } from "@/components/home/task-card";
 import { CONTESTS, CURRENT_USER } from "@/lib/mock-data";
-import { PanelLeft, Users } from "lucide-react";
+import { PanelLeft } from "lucide-react";
 
 const FEATURED_TASK = {
   title: "Brain MRI Lesion Detection",
@@ -95,11 +95,6 @@ export default function HomePage() {
                       {contest.title}
                     </h4>
 
-                    {/* Meta */}
-                    <div className="flex items-center gap-1 text-xs text-slate-400 mt-auto">
-                      <Users className="h-3 w-3" />
-                      <span>{contest.participantCount} specialists</span>
-                    </div>
                   </Link>
                 ))}
               </div>
