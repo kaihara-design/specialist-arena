@@ -9,7 +9,49 @@ Node via fnm. To activate: `eval "$(/Users/kaihara/.local/bin/fnm env --shell zs
 Then: `npm run dev` — serves on port 3000.
 
 ## Current branch
-`feature/accuracy-benchmark` (in review — not yet merged to main)
+`main`
+
+---
+
+## Session — 2026-03-10
+
+### Contest Detail Page — Information Architecture Update
+**Plan file:** `~/.claude/plans/contest-cta-steps.md` (CTA), `~/.claude/plans/prancy-splashing-valiant.md` (IA)
+**Status:** Implemented · merged to main
+
+#### Contest CTA — Progressive Steps (already in codebase)
+Steps to Join sequence already live in stats strip: ① View Instructions → ② Start Practice (if `hasPractice`) → ③ Join Competition. Instructions gate enforced; `hasViewedInstructions` set on modal open.
+
+#### Tab IA Restructure
+- "How to Compete" tab renamed to **"Rules & Prizes"** (`rules-prizes`)
+- Tab bar now: Overview · Leaderboard · Rules & Prizes
+
+#### Hero descriptions
+All 5 contests updated to a single punchy task-action line (no difficulty mention):
+- skin-lesion: "Classify dermoscopy images across 8 lesion categories."
+- chest-xray: "Segment and interpret pathological findings in chest X-rays."
+- retinal-oct: "Grade retinal OCT scans for signs of disease severity."
+- pathology-slides: "Classify tissue patterns across digitized pathology slides."
+- ecg-rhythm: "Classify cardiac rhythm patterns from 12-lead ECG recordings."
+
+#### About this Competition
+All 5 contest `about` values rewritten: 2–3 sentences on stakes, context, real-world impact. No restatement of hero description.
+
+#### Overview tab
+- About this Competition + Accuracy Benchmarks + How You Earn (no Prize Pool)
+- Prize Pool moved exclusively to Rules & Prizes tab
+
+#### Leaderboard tab
+- No structural change
+- Score callout: "reads" → "cases"
+
+#### Rules & Prizes tab (full rewrite)
+Two-column layout (`grid grid-cols-[3fr_2fr]`):
+- **Left**: How Your Score Works (4 numbered cards: Time decay + indigo callout, Volume, Difficulty, Score updates) · Eligibility (2 paragraphs) · Tie Breaking
+- **Right (sticky)**: How You Earn card · Prize Pool table (Place / Prize, 10 rows + Total)
+
+#### "reads" → "cases" throughout
+All UI copy updated: How You Earn labels, leaderboard callout, personal rank panel sidebar (`personal-rank-panel.tsx`), SCORE_MODE_SCORING in `mock-data.ts`
 
 ---
 

@@ -12,7 +12,6 @@ import {
   ArrowLeft,
   Users,
   Bot,
-  Mail,
   Zap,
   PanelLeft,
   DollarSign,
@@ -21,10 +20,12 @@ import {
   Lock,
   BookOpen,
   X,
+  Check,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Tab = "overview" | "leaderboard" | "how-to-compete";
+type Tab = "overview" | "leaderboard" | "rules-prizes";
 type LeaderboardFilter = "humans" | "ai";
 
 export default function ContestPage({
@@ -36,6 +37,7 @@ export default function ContestPage({
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [lbFilter, setLbFilter] = useState<LeaderboardFilter>("humans");
   const [hasPracticed, setHasPracticed] = useState(false);
+  const [hasViewedInstructions, setHasViewedInstructions] = useState(false);
   const [showInstructionsModal, setShowInstructionsModal] = useState(false);
 
   const contest = CONTESTS.find((c) => c.id === id);
@@ -53,10 +55,11 @@ export default function ContestPage({
   const tabs: { id: Tab; label: string }[] = [
     { id: "overview", label: "Overview" },
     { id: "leaderboard", label: "Leaderboard" },
-    { id: "how-to-compete", label: "How to Compete" },
+    { id: "rules-prizes", label: "Rules & Prizes" },
   ];
 
-  const needsPractice = contest.hasPractice && !hasPracticed;
+  const practiceComplete = !contest.hasPractice || hasPracticed;
+  const canJoin = hasViewedInstructions && practiceComplete;
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -156,65 +159,106 @@ export default function ContestPage({
                   </div>
                 ))}
               </div>
+
+              {/* Steps row */}
+              <div className="px-6 py-4 border-t border-slate-100">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-3">
+                  Steps to join
+                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+
+                  {/* Step 1 — View Instructions */}
+                  <button
+                    onClick={() => { setHasViewedInstructions(true); setShowInstructionsModal(true); }}
+                    className={cn(
+                      "flex items-center gap-2 h-9 px-4 text-sm rounded-[8px] transition-colors",
+                      hasViewedInstructions
+                        ? "font-medium bg-indigo-50 border border-indigo-100 text-indigo-600"
+                        : "font-semibold bg-indigo-600 text-white btn-shadow"
+                    )}
+                  >
+                    {hasViewedInstructions && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                    View Instructions
+                  </button>
+
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-300 flex-shrink-0" />
+
+                  {/* Step 2 — Start Practice (only if contest.hasPractice) */}
+                  {contest.hasPractice && (
+                    <>
+                      {hasPracticed ? (
+                        <button
+                          onClick={() => setHasPracticed(false)}
+                          className="flex items-center gap-2 h-9 px-4 text-sm font-medium rounded-[8px] bg-indigo-50 border border-indigo-100 text-indigo-600 transition-colors"
+                        >
+                          <Check className="h-3.5 w-3.5 flex-shrink-0" />
+                          Start Practice
+                        </button>
+                      ) : hasViewedInstructions ? (
+                        <button
+                          onClick={() => setHasPracticed(true)}
+                          className="flex items-center gap-2 h-9 px-4 text-sm font-semibold rounded-[8px] bg-indigo-600 text-white btn-shadow transition-colors"
+                        >
+                          Start Practice
+                        </button>
+                      ) : (
+                        <div className="relative group">
+                          <button disabled className="flex items-center gap-2 h-9 px-4 text-sm font-medium rounded-[8px] bg-slate-50 border border-slate-100 text-slate-400 cursor-not-allowed">
+                            Start Practice
+                            <Lock className="h-3.5 w-3.5" />
+                          </button>
+                          <div className="absolute left-0 top-full mt-1.5 w-max bg-slate-800 text-white text-xs rounded-[6px] px-2.5 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            View instructions first
+                          </div>
+                        </div>
+                      )}
+                      <ChevronRight className="h-3.5 w-3.5 text-slate-300 flex-shrink-0" />
+                    </>
+                  )}
+
+                  {/* Step 3 — Join Competition */}
+                  {canJoin ? (
+                    <Link
+                      href={`/arena/contest/${contest.id}`}
+                      className="flex items-center gap-2 h-9 px-4 text-sm font-semibold rounded-[8px] bg-indigo-600 text-white btn-shadow transition-colors"
+                    >
+                      Join Competition
+                    </Link>
+                  ) : (
+                    <div className="relative group">
+                      <button disabled className="flex items-center gap-2 h-9 px-4 text-sm font-medium rounded-[8px] bg-slate-50 border border-slate-100 text-slate-400 cursor-not-allowed">
+                        Join Competition
+                        <Lock className="h-3.5 w-3.5" />
+                      </button>
+                      <div className="absolute left-0 top-full mt-1.5 w-max bg-slate-800 text-white text-xs rounded-[6px] px-2.5 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        {!hasViewedInstructions ? "View instructions first" : "Complete practice first"}
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              </div>
             </div>
 
             {/* Tab bar */}
             <div
-              className="flex items-center justify-between border-b border-slate-100 mt-6 animate-fade-in"
+              className="flex items-center border-b border-slate-100 mt-6 animate-fade-in"
               style={{ animationDelay: "60ms" }}
             >
-              <div className="flex items-center">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={cn(
-                      "px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px",
-                      activeTab === tab.id
-                        ? "text-indigo-600 border-indigo-600"
-                        : "text-slate-500 border-transparent hover:text-slate-700"
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                {contest.hasPractice && (
-                  <button
-                    onClick={() => setHasPracticed(true)}
-                    className={cn(
-                      "flex items-center h-[34px] px-4 text-sm font-medium rounded-[8px] transition-colors",
-                      hasPracticed
-                        ? "border border-slate-200 text-slate-600 hover:bg-slate-50"
-                        : "bg-indigo-600 hover:bg-indigo-700 text-white btn-shadow"
-                    )}
-                  >
-                    {hasPracticed ? "Practice" : "Start Practice"}
-                  </button>
-                )}
-                {needsPractice ? (
-                  <div className="relative group">
-                    <button
-                      disabled
-                      className="flex items-center gap-1.5 h-[34px] px-4 text-slate-400 text-sm font-medium rounded-[8px] border border-slate-200 bg-slate-50 cursor-not-allowed"
-                    >
-                      <Lock className="h-3.5 w-3.5" />
-                      Join Competition
-                    </button>
-                    <div className="absolute right-0 top-full mt-1.5 w-max max-w-[200px] bg-slate-800 text-white text-xs rounded-[6px] px-2.5 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                      Complete practice first
-                    </div>
-                  </div>
-                ) : (
-                  <Link
-                    href={`/arena/contest/${contest.id}`}
-                    className="flex items-center h-[34px] px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-[8px] transition-colors btn-shadow"
-                  >
-                    Join Competition
-                  </Link>
-                )}
-              </div>
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px",
+                    activeTab === tab.id
+                      ? "text-indigo-600 border-indigo-600"
+                      : "text-slate-500 border-transparent hover:text-slate-700"
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
             {/* Tab content */}
@@ -326,107 +370,56 @@ export default function ContestPage({
                     })()}
                   </section>
 
-                  {/* How You Earn + Payouts — side by side */}
-                  <div className="grid grid-cols-2 gap-6 items-start">
-                    {/* Prize pool info */}
-                    <section>
-                      <h2 className="text-lg font-semibold text-slate-800 mb-3">
-                        How You Earn
-                      </h2>
-                      <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
-                        {[
-                          {
-                            icon: <DollarSign className="h-4 w-4 text-emerald-500" />,
-                            label: "Weekly prize pool",
-                            sub: "top 10 ranked specialists share $100",
-                            value: `$${contest.prizePoolAmount}`,
-                          },
-                          {
-                            icon: <Zap className="h-4 w-4 text-amber-500" />,
-                            label: "Min reads",
-                            sub: "complete at least 20 reads to appear on the leaderboard",
-                            value: `${contest.minReads}`,
-                          },
-                          {
-                            icon: <RefreshCw className="h-4 w-4 text-indigo-400" />,
-                            label: "Max reads",
-                            sub: "weekly read limit — resets each Monday",
-                            value: `${contest.maxReads}`,
-                          },
-                        ].map(({ icon, label, sub, value }, i, arr) => (
-                          <div
-                            key={label}
-                            className={cn(
-                              "flex items-center justify-between px-5 py-3.5",
-                              i < arr.length - 1 && "border-b border-slate-50"
-                            )}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="h-7 w-7 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0">
-                                {icon}
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-slate-700">{label}</p>
-                                <p className="text-xs text-slate-400">{sub}</p>
-                              </div>
+                  {/* How You Earn */}
+                  <section>
+                    <h2 className="text-lg font-semibold text-slate-800 mb-3">
+                      How You Earn
+                    </h2>
+                    <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
+                      {[
+                        {
+                          icon: <DollarSign className="h-4 w-4 text-emerald-500" />,
+                          label: "Weekly prize pool",
+                          sub: "top 10 ranked specialists share $100",
+                          value: `$${contest.prizePoolAmount}`,
+                        },
+                        {
+                          icon: <Zap className="h-4 w-4 text-amber-500" />,
+                          label: "Min cases",
+                          sub: "complete at least 20 cases to appear on the leaderboard",
+                          value: `${contest.minReads}`,
+                        },
+                        {
+                          icon: <RefreshCw className="h-4 w-4 text-indigo-400" />,
+                          label: "Max cases",
+                          sub: "weekly case limit — resets each Monday",
+                          value: `${contest.maxReads}`,
+                        },
+                      ].map(({ icon, label, sub, value }, i, arr) => (
+                        <div
+                          key={label}
+                          className={cn(
+                            "flex items-center justify-between px-5 py-3.5",
+                            i < arr.length - 1 && "border-b border-slate-50"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="h-7 w-7 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0">
+                              {icon}
                             </div>
-                            <span className="text-sm font-extrabold text-slate-800">{value}</span>
+                            <div>
+                              <p className="text-sm font-semibold text-slate-700">{label}</p>
+                              <p className="text-xs text-slate-400">{sub}</p>
+                            </div>
                           </div>
-                        ))}
-                        <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
-                          <p className="text-xs text-slate-400">Prizes paid out after each weekly cycle closes</p>
+                          <span className="text-sm font-extrabold text-slate-800">{value}</span>
                         </div>
+                      ))}
+                      <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
+                        <p className="text-xs text-slate-400">Prizes paid out after each weekly cycle closes</p>
                       </div>
-                    </section>
-
-                    {/* Prize breakdown */}
-                    <section>
-                      <h2 className="text-lg font-semibold text-slate-800 mb-3">
-                        Prize Pool
-                      </h2>
-                      <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-5 py-2.5 bg-slate-50 border-b border-slate-100">
-                          <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Place</span>
-                          <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Prize</span>
-                        </div>
-                        {PRIZE_BREAKDOWN.map(({ rank, prize }, i) => (
-                          <div
-                            key={rank}
-                            className={cn(
-                              "flex items-center justify-between px-5 py-2.5",
-                              i < PRIZE_BREAKDOWN.length - 1 && "border-b border-slate-50"
-                            )}
-                          >
-                            <span className="text-sm font-medium text-slate-600">
-                              {rank === 1 ? "1st" : rank === 2 ? "2nd" : rank === 3 ? "3rd" : `${rank}th`}
-                            </span>
-                            <span className="text-sm font-bold text-amber-500">${prize}</span>
-                          </div>
-                        ))}
-                        {/* Total row */}
-                        <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50">
-                          <span className="text-sm font-bold text-slate-700">Total</span>
-                          <span className="text-sm font-extrabold text-slate-800">$100</span>
-                        </div>
-                      </div>
-                      {/* Callout */}
-                      <div className="bg-indigo-50 border border-indigo-100 rounded-[14px] p-5 flex items-start gap-3 mt-3">
-                        <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Mail className="h-4 w-4 text-indigo-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-indigo-900 mb-1">
-                            Top performers share the prize each week
-                          </p>
-                          <p className="text-sm text-indigo-700 leading-relaxed">
-                            Each week, the top 10 specialists split $100. The higher you rank, the bigger your share. Climb by labeling accurately and staying active. If you finish in the top 10, you&apos;ll receive an{" "}
-                            <span className="font-semibold text-indigo-900">email</span> with prize details.
-                          </p>
-                        </div>
-                      </div>
-                    </section>
-                  </div>
+                    </div>
+                  </section>
 
                 </div>
               )}
@@ -441,7 +434,7 @@ export default function ContestPage({
                     <div className="bg-slate-50 border border-slate-100 rounded-[10px] px-4 py-3 flex items-start gap-2.5">
                       <Infinity className="h-3.5 w-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-slate-500 leading-relaxed">
-                        Your score is based on accuracy, weighted by recency. Complete at least 20 reads this week to appear on the leaderboard. The top 10 ranked specialists share the $100 weekly prize.
+                        Your score is based on accuracy, weighted by recency. Complete at least 20 cases this week to appear on the leaderboard. The top 10 ranked specialists share the $100 weekly prize.
                       </p>
                     </div>
 
@@ -552,43 +545,166 @@ export default function ContestPage({
                 </div>
               )}
 
-              {/* ── How to Compete ── */}
-              {activeTab === "how-to-compete" && (
-                <div className="grid grid-cols-2 gap-8">
-                  {/* Scoring rules */}
-                  <section>
-                    <h2 className="text-lg font-semibold text-slate-800 mb-4">How Scoring Works</h2>
-                    <div className="flex flex-col gap-3">
-                      {contest.scoring.map((item, i) => (
-                        <div
-                          key={item.title}
-                          className="bg-white border border-slate-100 rounded-[12px] px-5 py-4 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.06)]"
-                        >
-                          <div className="flex items-start gap-3">
-                            <span className="flex-shrink-0 h-5 w-5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold flex items-center justify-center mt-0.5">
-                              {i + 1}
-                            </span>
-                            <div>
-                              <p className="text-sm font-semibold text-slate-800 mb-0.5">{item.title}</p>
-                              <p className="text-sm text-slate-500 leading-relaxed">{item.body}</p>
+              {/* ── Rules & Prizes ── */}
+              {activeTab === "rules-prizes" && (
+                <div className="grid grid-cols-[3fr_2fr] gap-8 items-start">
+
+                  {/* Left column */}
+                  <div className="flex flex-col gap-6">
+
+                    {/* How Your Score Works */}
+                    <section>
+                      <h2 className="text-lg font-semibold text-slate-800 mb-1">How Your Score Works</h2>
+                      <p className="text-sm text-slate-500 mb-4">Your score is a weighted average of your accuracy across all completed cases, adjusted for time, volume, and difficulty.</p>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          {
+                            title: "Time decay",
+                            body: "Your score reflects your recent performance, not your all-time accuracy. Labels from this week count fully and older labels fade over time, with each week roughly halving their contribution. Staying active week over week is the best way to maintain your rank.",
+                            callout: "A label from today counts fully. The same label from last week counts half as much. From two weeks ago, a quarter. Labels older than a month contribute very little to your current score.",
+                          },
+                          {
+                            title: "Volume",
+                            body: "Completing more cases strengthens your score, but accuracy drives it. A high volume of correct labels beats a low volume of correct labels, but accurate labels always outweigh inaccurate ones regardless of quantity.",
+                          },
+                          {
+                            title: "Difficulty",
+                            body: "Harder cases are worth more when you get them right. Each case carries a difficulty value between 0 and 1, and tougher cases contribute more to your score than straightforward ones.",
+                          },
+                          {
+                            title: "Score updates",
+                            body: "Your score updates regularly throughout the week. You\u2019ll see changes reflected when you visit the leaderboard, along with context on what moved your rank.",
+                          },
+                        ].map((item, i) => (
+                          <div key={item.title} className="bg-white border border-slate-100 rounded-[12px] px-5 py-4 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.06)]">
+                            <div className="flex items-start gap-3">
+                              <span className="flex-shrink-0 h-5 w-5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold flex items-center justify-center mt-0.5">
+                                {i + 1}
+                              </span>
+                              <div className="flex-1">
+                                <p className="text-sm font-semibold text-slate-800 mb-0.5">{item.title}</p>
+                                <p className="text-sm text-slate-500 leading-relaxed">{item.body}</p>
+                                {item.callout && (
+                                  <div className="mt-3 bg-indigo-50 border border-indigo-100 rounded-[10px] px-4 py-3">
+                                    <p className="text-sm text-indigo-700 leading-relaxed">{item.callout}</p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
+                        ))}
+                      </div>
+                    </section>
 
-                  {/* Task Instructions */}
-                  <section>
-                    <h2 className="text-lg font-semibold text-slate-800 mb-4">Task Instructions</h2>
-                    <button
-                      onClick={() => setShowInstructionsModal(true)}
-                      className="flex items-center gap-2 h-[38px] px-4 text-sm font-medium text-slate-700 border border-slate-200 rounded-[8px] hover:bg-slate-50 transition-colors"
-                    >
-                      <BookOpen className="h-4 w-4 text-slate-400" />
-                      View Task Instructions
-                    </button>
-                  </section>
+                    {/* Eligibility */}
+                    <section>
+                      <h2 className="text-lg font-semibold text-slate-800 mb-3">Eligibility</h2>
+                      <div className="bg-white border border-slate-100 rounded-[14px] px-5 py-4 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)] flex flex-col gap-3">
+                        <p className="text-sm text-slate-500 leading-relaxed">
+                          Complete at least 20 cases in a week to appear on the leaderboard and be eligible for prizes. Specialists below this threshold are not shown in rankings.
+                        </p>
+                        <p className="text-sm text-slate-500 leading-relaxed">
+                          You can complete up to 100 cases per week. Once you reach the limit, no further cases are accepted until the weekly cycle resets each Monday. Make your cases count.
+                        </p>
+                      </div>
+                    </section>
+
+                    {/* Tie Breaking */}
+                    <section>
+                      <h2 className="text-lg font-semibold text-slate-800 mb-3">Tie Breaking</h2>
+                      <div className="bg-white border border-slate-100 rounded-[14px] px-5 py-4 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
+                        <p className="text-sm text-slate-500 leading-relaxed">
+                          When two specialists have the same score, the one with more cases completed that week ranks higher.
+                        </p>
+                      </div>
+                    </section>
+
+                  </div>
+
+                  {/* Right column */}
+                  <div className="sticky top-6 flex flex-col gap-4">
+
+                    {/* How You Earn */}
+                    <div>
+                      <h2 className="text-lg font-semibold text-slate-800 mb-3">How You Earn</h2>
+                      <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
+                        {[
+                          {
+                            icon: <DollarSign className="h-4 w-4 text-emerald-500" />,
+                            label: "Weekly prize pool",
+                            sub: "top 10 ranked specialists share $100",
+                            value: `$${contest.prizePoolAmount}`,
+                          },
+                          {
+                            icon: <Zap className="h-4 w-4 text-amber-500" />,
+                            label: "Min cases",
+                            sub: "complete at least 20 cases to appear",
+                            value: `${contest.minReads}`,
+                          },
+                          {
+                            icon: <RefreshCw className="h-4 w-4 text-indigo-400" />,
+                            label: "Max cases",
+                            sub: "weekly case limit — resets each Monday",
+                            value: `${contest.maxReads}`,
+                          },
+                        ].map(({ icon, label, sub, value }, i, arr) => (
+                          <div
+                            key={label}
+                            className={cn(
+                              "flex items-center justify-between px-4 py-3",
+                              i < arr.length - 1 && "border-b border-slate-50"
+                            )}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="h-6 w-6 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                {icon}
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold text-slate-700">{label}</p>
+                                <p className="text-[11px] text-slate-400 leading-snug">{sub}</p>
+                              </div>
+                            </div>
+                            <span className="text-sm font-extrabold text-slate-800">{value}</span>
+                          </div>
+                        ))}
+                        <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50">
+                          <p className="text-[11px] text-slate-400">Prizes paid out after each weekly cycle closes</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Prize Pool */}
+                    <div>
+                      <h2 className="text-lg font-semibold text-slate-800 mb-3">Prize Pool</h2>
+                      <p className="text-xs text-slate-500 mb-3 leading-relaxed">Each week, the top 10 ranked specialists share $100. The higher you rank, the bigger your share. Prizes are paid out after each weekly cycle closes.</p>
+                      <div className="bg-white border border-slate-100 rounded-[14px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)]">
+                        <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-100">
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Place</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Prize</span>
+                        </div>
+                        {PRIZE_BREAKDOWN.map(({ rank, prize }, i) => (
+                          <div
+                            key={rank}
+                            className={cn(
+                              "flex items-center justify-between px-4 py-2",
+                              i < PRIZE_BREAKDOWN.length - 1 && "border-b border-slate-50"
+                            )}
+                          >
+                            <span className="text-sm font-medium text-slate-600">
+                              {rank === 1 ? "1st" : rank === 2 ? "2nd" : rank === 3 ? "3rd" : `${rank}th`}
+                            </span>
+                            <span className="text-sm font-bold text-amber-500">${prize}</span>
+                          </div>
+                        ))}
+                        <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-100 bg-slate-50">
+                          <span className="text-sm font-bold text-slate-700">Total</span>
+                          <span className="text-sm font-extrabold text-slate-800">$100</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
                 </div>
               )}
 

@@ -66,7 +66,7 @@ export function PersonalRankPanel({
             {score.toFixed(1)}
           </p>
           <p className="text-xs text-slate-400 mb-0.5">
-            {readsThisWeek} / {maxReads} reads
+            {readsThisWeek} / {maxReads} cases
           </p>
         </div>
         {/* Reads progress bar */}
@@ -81,7 +81,7 @@ export function PersonalRankPanel({
         </div>
         {isBelowMin && (
           <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
-            Complete {readsToMin} more read{readsToMin !== 1 ? "s" : ""} to appear on the leaderboard.
+            Complete {readsToMin} more case{readsToMin !== 1 ? "s" : ""} to appear on the leaderboard.
           </p>
         )}
       </div>
@@ -102,14 +102,14 @@ export function PersonalRankPanel({
         <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-[8px] px-3 py-2">
           <RefreshCw className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
           <span>
-            Weekly read limit reached — resets in {daysUntilReset} day{daysUntilReset !== 1 ? "s" : ""}
+            Weekly case limit reached — resets in {daysUntilReset} day{daysUntilReset !== 1 ? "s" : ""}
           </span>
         </div>
       ) : isBelowMin ? (
         <div className="flex items-start gap-2 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-[8px] px-3 py-2">
           <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
           <span>
-            {readsToMin} more read{readsToMin !== 1 ? "s" : ""} needed to appear on the leaderboard
+            {readsToMin} more case{readsToMin !== 1 ? "s" : ""} needed to appear on the leaderboard
           </span>
         </div>
       ) : (

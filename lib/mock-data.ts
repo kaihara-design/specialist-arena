@@ -90,15 +90,15 @@ export const AI_MODELS_LEADERBOARD: AIModelEntry[] = [
 const SCORE_MODE_SCORING = [
   {
     title: "Time-weighted score",
-    body: "Your score is based on accuracy, weighted by recency. Reads decay over time — a read from last week contributes roughly half as much as one from today. Your score determines your rank, and your rank determines your share of the weekly prize.",
+    body: "Your score is based on accuracy, weighted by recency. Cases decay over time — a case labeled last week contributes roughly half as much as one labeled today. Your score determines your rank, and your rank determines your share of the weekly prize.",
   },
   {
-    title: "Min 20 reads per week",
-    body: "You must complete at least 20 reads in a week to appear on the leaderboard and be eligible for prizes. Specialists below this threshold are not shown in rankings.",
+    title: "Min 20 cases per week",
+    body: "You must complete at least 20 cases in a week to appear on the leaderboard and be eligible for prizes. Specialists below this threshold are not shown in rankings.",
   },
   {
-    title: "Max 100 reads per week",
-    body: "You can submit up to 100 reads per week. Once you reach the limit, no further reads are accepted until the weekly cycle resets. Make your reads count.",
+    title: "Max 100 cases per week",
+    body: "You can submit up to 100 cases per week. Once you reach the limit, no further cases are accepted until the weekly cycle resets. Make your cases count.",
   },
   {
     title: "Weekly prize pool",
@@ -106,7 +106,7 @@ const SCORE_MODE_SCORING = [
   },
   {
     title: "Tie-breaking",
-    body: "When two specialists have the same score, the one with more reads completed that week ranks higher.",
+    body: "When two specialists have the same score, the one with more cases completed that week ranks higher.",
   },
 ];
 
@@ -115,9 +115,9 @@ export const CONTESTS: Contest[] = [
     id: "skin-lesion",
     title: "Skin Lesion Classification",
     description:
-      "Analyze dermatological images and classify lesions across 8 categories. High-difficulty task requiring clinical expertise in dermoscopy.",
+      "Classify dermoscopy images across 8 lesion categories.",
     about:
-      "Skin cancer is the most common cancer worldwide, yet early diagnosis dramatically improves outcomes. In this competition, specialists review dermoscopy images and classify lesions across eight categories — from benign nevi to melanoma. Your labels contribute directly to a gold-standard dataset that trains AI models used in clinical screening tools.\n\nEvery case you complete helps close the gap between expert diagnosis and what automated systems can reliably detect. The task is challenging by design: difficult cases earn more when labeled correctly, and the collective consensus of top specialists consistently outperforms any single annotator or AI model.",
+      "Skin cancer is the most common cancer worldwide, yet early diagnosis dramatically improves outcomes. Your labels contribute directly to a gold-standard dataset that trains AI screening tools deployed in clinical settings. Difficult cases earn more when labeled correctly — and the collective consensus of top specialists consistently outperforms any individual or AI model.",
     taskType: "Classification",
     participantCount: 150,
     activeSince: "Jan 15, 2025",
@@ -141,9 +141,9 @@ export const CONTESTS: Contest[] = [
     id: "chest-xray",
     title: "Chest X-Ray Interpretation",
     description:
-      "Identify and annotate findings in chest radiographs including pneumonia, effusions, and nodules. Requires radiology knowledge.",
+      "Segment and interpret pathological findings in chest X-rays.",
     about:
-      "Chest radiograph interpretation is one of the most common — and error-prone — tasks in clinical radiology. Missed findings cost lives; over-reads waste resources. In this competition, specialists review frontal chest X-rays and identify the primary pathological finding from a structured set of options.\n\nYour annotations help build AI models that can flag abnormalities in resource-limited settings where radiologists are scarce. The competition is designed to capture expert-level signal: cases with high annotator agreement receive less weight, while contested cases — where human judgment matters most — are scored more heavily.",
+      "Missed findings in chest radiographs cost lives; over-reads waste clinical resources. Your annotations help build AI models that flag abnormalities in resource-limited settings where radiologists are scarce. Cases with high annotator disagreement carry more weight — where human judgment matters most, your precision makes the biggest difference.",
     taskType: "Segmentation",
     participantCount: 98,
     activeSince: "Feb 3, 2025",
@@ -167,9 +167,9 @@ export const CONTESTS: Contest[] = [
     id: "retinal-oct",
     title: "Retinal OCT Grading",
     description:
-      "Grade optical coherence tomography scans for diabetic macular edema and age-related macular degeneration severity.",
+      "Grade retinal OCT scans for signs of disease severity.",
     about:
-      "Optical coherence tomography (OCT) is the standard of care for retinal imaging, yet grading thousands of scans for clinical trials and AI training requires specialist time that is in short supply. In this competition, ophthalmologists and optometrists review OCT cross-sections and grade disease severity on a structured scale.\n\nYour annotations directly accelerate the development of AI screening tools for diabetic retinopathy and AMD — two of the leading causes of preventable blindness worldwide.",
+      "OCT is the standard of care for retinal imaging, but grading thousands of scans for AI training requires specialist time that is in short supply. Your annotations directly accelerate the development of screening tools for diabetic retinopathy and AMD — two of the leading causes of preventable blindness worldwide. Cases where annotators disagree are weighted more heavily, making expert judgment the most valuable input.",
     taskType: "Grading",
     participantCount: 74,
     activeSince: "Feb 20, 2025",
@@ -193,9 +193,9 @@ export const CONTESTS: Contest[] = [
     id: "pathology-slides",
     title: "Pathology Slide Analysis",
     description:
-      "Review digitized histopathology slides and identify tumor margins, grade malignancy, and annotate tissue subtypes.",
+      "Classify tissue patterns across digitized pathology slides.",
     about:
-      "Digital pathology is transforming how tissue samples are analyzed, but AI models require expert-labeled training data at scale. In this competition, pathologists review whole-slide images cropped to regions of interest and classify tissue as benign, pre-malignant, or malignant — with additional subtype annotation where applicable.\n\nEvery case you label advances the accuracy of AI-assisted pathology tools used in cancer diagnosis pipelines.",
+      "AI-assisted pathology tools are transforming cancer diagnosis pipelines, but they require expert-labeled training data at scale. Your labels advance the accuracy of models used in clinical diagnosis — from early detection of pre-malignant changes to grading invasive carcinoma. Every case you complete contributes to a dataset that pathologists across the network help refine.",
     taskType: "Classification",
     participantCount: 61,
     activeSince: "Mar 1, 2025",
@@ -219,9 +219,9 @@ export const CONTESTS: Contest[] = [
     id: "ecg-rhythm",
     title: "ECG Rhythm Classification",
     description:
-      "Classify 12-lead ECG recordings across arrhythmia categories. Requires cardiology or emergency medicine background.",
+      "Classify cardiac rhythm patterns from 12-lead ECG recordings.",
     about:
-      "Cardiac arrhythmias are among the most time-sensitive diagnoses in medicine, yet automated ECG interpretation still misses clinically important findings. In this competition, cardiologists and emergency physicians review 10-second 12-lead ECG strips and assign the primary rhythm classification.\n\nYour labels contribute to training models that will flag abnormal rhythms in remote monitoring and wearable devices — extending specialist-level ECG reading to populations without access to cardiologists.",
+      "Cardiac arrhythmias are among the most time-sensitive diagnoses in medicine, yet automated ECG interpretation still misses clinically important findings. Your labels contribute to training models that flag abnormal rhythms in remote monitoring and wearable devices — extending specialist-level reading to populations without access to cardiologists. Contested cases carry more weight, rewarding the precise judgment that distinguishes expert from algorithmic interpretation.",
     taskType: "Classification",
     participantCount: 88,
     activeSince: "Mar 5, 2025",
