@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, Target, RefreshCw, AlertCircle, DollarSign } from "lucide-react";
+import { Target, RefreshCw, AlertCircle, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PRIZE_BREAKDOWN } from "@/lib/mock-data";
 
@@ -45,17 +45,6 @@ export function PersonalRankPanel({
             of {totalParticipants}
           </span>
         </div>
-        {rankChange !== 0 && (
-          <div
-            className={cn(
-              "flex items-center gap-1 text-xs font-medium mt-1",
-              rankChange > 0 ? "text-emerald-600" : "text-red-500"
-            )}
-          >
-            <TrendingUp className="h-3.5 w-3.5" />
-            {rankChange > 0 ? `↑ Up ${rankChange}` : `↓ Down ${Math.abs(rankChange)}`} since last update
-          </div>
-        )}
       </div>
 
       {/* Score this cycle */}
